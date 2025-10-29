@@ -101,6 +101,14 @@
       .placement-box { width: 30px; height: 30px; line-height: 30px; font-size: 0.8rem; }
       .chart-container { height: 300px; }
     }
+
+    /* ANDRÉ RIEU VLAGGEN ANIMATIE */
+    @keyframes fall {
+      to { 
+        transform: translateY(120vh) rotate(1080deg); 
+        opacity: 0; 
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -110,8 +118,12 @@
     <span class="fas fa-moon text-accent-gold text-xl"></span>
   </button>
 
-  <!-- AUDIO -->
-  <audio id="victory" src="https://hebbars.github.io/hearthstone-victory.mp3" preload="auto"></audio>
+  <!-- ANDRÉ RIEU AUDIO -->
+  <audio id="andre-rieu" preload="auto">
+    <source src="https://cdn.freesound.org/previews/689/689346_5674468-lq.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- CARD FLIP GELUID -->
   <audio id="newgame" src="https://hebbars.github.io/hearthstone-card-flip.mp3" preload="auto"></audio>
 
   <!-- Nav -->
@@ -202,8 +214,8 @@
 
   <!-- Footer -->
   <footer class="bg-primary/95 py-8 mt-auto text-center border-t border-accent-gold/20">
-    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.2</p>
-    <p class="text-xs">© 2025 • Handmatig refresh • GitHub Pages</p>
+    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.3</p>
+    <p class="text-xs">© 2025 • Klik op Kipknots voor André Rieu • GitHub Pages</p>
   </footer>
 
   <!-- JS -->
@@ -237,8 +249,42 @@
     function winrate(p) { return p.length ? (p.filter(x => x === 1).length / p.length * 100).toFixed(1) : '0.0'; }
     function top4rate(p) { return p.length ? (p.filter(x => x <= 4).length / p.length * 100).toFixed(1) : '0.0'; }
 
-    function triggerConfetti() {
-      confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    // ANDRÉ RIEU + BELGISCHE VLAGGENSTORM
+    function kipknotsBelgianStorm() {
+      const audio = document.getElementById('andre-rieu');
+      audio.currentTime = 0;
+      audio.play();
+
+      let flagCount = 0;
+      const interval = setInterval(() => {
+        if (flagCount >= 120) {
+          clearInterval(interval);
+          setTimeout(() => audio.pause(), 3000);
+          return;
+        }
+
+        const flag = document.createElement('div');
+        flag.innerHTML = 'België';
+        flag.style.position = 'fixed';
+        flag.style.fontSize = Math.random() * 35 + 25 + 'px';
+        flag.style.left = Math.random() * 100 + 'vw';
+        flag.style.top = '-60px';
+        flag.style.zIndex = '9999';
+        flag.style.pointerEvents = 'none';
+        flag.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+        flag.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(flag);
+
+        setTimeout(() => flag.remove(), 5000);
+        flagCount++;
+      }, 40);
+
+      confetti({
+        particleCount: 200,
+        spread: 120,
+        origin: { y: 0.3 },
+        colors: ['#ED2939', '#FFCD00', '#000000']
+      });
     }
 
     function renderGraph() {
@@ -291,24 +337,26 @@
       const totalGames = Math.max(...players.map(p => p.placements.length));
       const remaining = Math.max(0, GAMES_PER_HEAT - totalGames);
 
-      // CONFETTI & SOUND
       if (totalGames > previousGames) {
-        const lastGamePlacements = players.map(p => p.placements[p.placements.length - 1]);
-        const winner = lastGamePlacements.indexOf(1);
-        if (winner !== -1) {
-          triggerConfetti();
-          document.getElementById('victory').play();
-        } else {
-          document.getElementById('newgame').play();
-        }
+        document.getElementById('newgame').play();
       }
       previousGames = totalGames;
 
-      // Spelers
       document.getElementById('players-grid').innerHTML = sorted.map((p, i) => {
         const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
         const imgKey = p.name.toLowerCase() + (i === 0 ? '-crown' : '');
         const img = playerImages[imgKey] || playerImages[p.name.toLowerCase()];
+
+        let imgHtml;
+        if (p.name === 'Kipknots') {
+          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" 
+                          onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'"
+                          onclick="kipknotsBelgianStorm()" style="cursor: pointer; border: 6px solid #FFD700;">`;
+        } else {
+          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" 
+                          onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">`;
+        }
+
         const historyBoxes = p.placements.map(pos => {
           let cls = 'placement-default';
           if (pos === 1) cls = 'placement-1';
@@ -317,8 +365,9 @@
           else if (pos === 4) cls = 'placement-4';
           return `<div class="placement-box ${cls}">${pos}</div>`;
         }).join('');
+
         return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs animate-slideUp">
-          <img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
+          ${imgHtml}
           <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}${i===0?' 👑':''}</h3>
           <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
           <div class="text-3xl font-bold text-accent-gold mb-1">${calcPoints(p.placements)}</div>
@@ -331,7 +380,6 @@
         </div>`;
       }).join('');
 
-      // Hall of Fame
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
         <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm animate-bounceIn">
@@ -345,8 +393,6 @@
       `).join('') : '<p class="col-span-4 text-center text-gray-400 py-16 text-xl">Nog geen kampioenen. Wie wordt de eerste?</p>';
 
       document.getElementById('games-left').textContent = remaining;
-
-      // Update grafiek – stopt bij laatste game
       renderGraph();
     }
 
