@@ -40,18 +40,46 @@
     .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
     .player-img { width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 6px solid #fbbf24; transition: all 0.3s ease; }
     .player-img.crown { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; }
-    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table-container table { min-width: 600px; width: 100%; }
+    
+    /* TABEL FIX VOOR MOBIEL */
+    .table-container { 
+      overflow-x: auto; 
+      -webkit-overflow-scrolling: touch; 
+      border-radius: 1rem;
+      margin: 0 -1rem;
+      padding: 0 1rem;
+    }
+    .table-container table { 
+      min-width: 600px; 
+      width: 100%; 
+      table-layout: auto;
+    }
+    .table-container th, .table-container td { 
+      white-space: nowrap; 
+      padding: 0.75rem 0.5rem; 
+      font-size: 0.875rem;
+    }
+    .table-container thead th { 
+      background: #6b21a8; 
+      color: white; 
+      font-weight: 600;
+    }
+
     .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
     .match-history { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; word-break: break-all; }
     .champion-card { position: relative; overflow: hidden; border: 3px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0f172a); }
     .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.1), transparent); opacity: 0; transition: opacity 0.5s; }
     .champion-card:hover::before { opacity: 1; }
     .champion-crown { font-size: 4rem; color: #ffd700; filter: drop-shadow(0 0 20px #ffd700); animation: championPulse 2s infinite; }
+
     @media (max-width: 768px) {
       .player-img { width: 180px; height: 180px; }
       .games-remaining { font-size: 1.6rem; padding: 8px 20px; }
       .champion-crown { font-size: 3rem; }
+      .season-title { font-size: 3rem; }
+      .crown-icon { font-size: 2.5rem; }
+      .table-container { margin: 0 -1.5rem; padding: 0 1.5rem; }
+      .table-container th, .table-container td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -71,7 +99,7 @@
     </div>
   </nav>
 
-  <!-- HERO: SEASON 2 -->
+  <!-- HERO -->
   <section id="home" class="hero-overlay py-20 text-center">
     <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
       <div class="flex justify-center items-center gap-4 mb-4">
@@ -87,28 +115,28 @@
     </div>
   </section>
 
-  <!-- Huidige Stand -->
+  <!-- HUIDIGE STAND – MOBIEL PERFECT -->
   <section id="stand" class="py-16">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">Huidige Stand</h2>
+      <h2 class="text-4xl md:text-5xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">HUIDIGE STAND</h2>
       <div class="table-container bg-primary/80 backdrop-blur rounded-xl overflow-hidden shadow-2xl">
         <table class="w-full text-left">
-          <thead class="bg-accent-purple/30">
+          <thead>
             <tr>
-              <th class="p-4">#</th>
-              <th class="p-4">Speler</th>
-              <th class="p-4">Games</th>
-              <th class="p-4">Punten</th>
-              <th class="p-4">Gem. Plaats</th>
+              <th class="p-3">#</th>
+              <th class="p-3">Speler</th>
+              <th class="p-3">Games</th>
+              <th class="p-3">Punten</th>
+              <th class="p-3">Gem. Plaats</th>
             </tr>
           </thead>
-          <tbody id="stand-body"></tbody>
+          <tbody id="stand-body" class="text-sm"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- De Strijders + Match History -->
+  <!-- De Strijders -->
   <section id="spelers" class="py-16 bg-primary/50">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Strijders</h2>
@@ -116,7 +144,7 @@
     </div>
   </section>
 
-  <!-- HALL OF FAME S2 – EPISCHE ODE -->
+  <!-- HALL OF FAME S2 – EPISCH -->
   <section id="hall" class="py-24 bg-gradient-to-b from-transparent via-primary/20 to-transparent">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-6xl font-cinzel text-champion-gold text-center mb-16 animate-fadeIn" style="text-shadow: 0 0 30px #ffd700;">
@@ -126,7 +154,7 @@
     </div>
   </section>
 
-  <!-- SEASON 1 LEGEND: KIPKNOTS (klein) -->
+  <!-- SEASON 1 LEGEND -->
   <section id="season1-legend" class="py-16 bg-primary/30">
     <div class="max-w-7xl mx-auto px-4 text-center">
       <h2 class="text-4xl font-cinzel text-accent-gold mb-6">👑 Season 1 Legend: Kipknots 👑</h2>
@@ -147,19 +175,16 @@
 
   <!-- JS -->
   <script>
-    // === UPDATE HIER: GAMES (1 = 1e, 8 = 8e) ===
     const players = [
       { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8] },
       { name: "Chillz", tag: "Chillz#2925", placements: [8] },
       { name: "Kipknots", tag: "Kipknots#21143", placements: [8] }
     ];
 
-    // === HALL OF FAME S2 – EPISCH ===
     const hallOfFame = [
       { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
     ];
 
-    // === FOTO'S ===
     const playerImages = {
       pieterhvh: "https://i.imgur.com/yxF4fv8.jpg",
       'pieterhvh-crown': "https://i.imgur.com/2jv8C3v.jpg",
@@ -184,21 +209,21 @@
       // Stand
       document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
         <tr class="hover:bg-slate-800">
-          <td class="p-4 font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
-          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
-          <td class="p-4">${p.placements.length}</td>
-          <td class="p-4 font-bold text-accent-gold">${calcPoints(p.placements)}</td>
-          <td class="p-4">${calcAvg(p.placements)}</td>
+          <td class="font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
+          <td>${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
+          <td>${p.placements.length}</td>
+          <td class="font-bold text-accent-gold">${calcPoints(p.placements)}</td>
+          <td>${calcAvg(p.placements)}</td>
         </tr>
       `).join('');
 
-      // Spelers + Match History
+      // Spelers
       document.getElementById('players-grid').innerHTML = players.map(p => {
         const isLeader = p.name.toLowerCase() === leader;
         const imgKey = p.name.toLowerCase() + (isLeader ? '-crown' : '');
         const img = playerImages[imgKey] || playerImages[p.name.toLowerCase()];
         const history = p.placements.map(pos => `<span class="inline-block w-6 text-center">${pos}</span>`).join(' ');
-        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-8 card-glow text-center max-w-xs">
+        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs">
           <img src="${img}" class="player-img mx-auto mb-4 ${isLeader?'crown':''}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
           <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}</h3>
           <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
@@ -208,7 +233,7 @@
         </div>`;
       }).join('');
 
-      // HALL OF FAME S2 – EPISCH
+      // Hall of Fame
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
         <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm">
@@ -221,7 +246,6 @@
         </div>
       `).join('') : '<p class="col-span-4 text-center text-gray-400 py-16 text-xl">Nog geen kampioenen. Wie wordt de eerste?</p>';
 
-      // Games Remaining
       document.getElementById('games-left').textContent = remaining;
     }
 
