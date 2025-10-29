@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hearthstonebois - Battlegrounds</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>CROWN</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,18 +12,10 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            'bg-dark': '#0f172a',
-            'primary': '#1e293b',
-            'accent-gold': '#fbbf24',
-            'accent-purple': '#a855f7',
-          },
+          colors: { 'bg-dark': '#0f172a', 'primary': '#1e293b', 'accent-gold': '#fbbf24', 'accent-purple': '#a855f7' },
           fontFamily: { 'cinzel': ['Cinzel', 'serif'], 'roboto': ['Roboto', 'sans-serif'] },
           animation: { glow: 'glow 2s ease-in-out infinite alternate', fadeIn: 'fadeIn 0.8s ease-out' },
-          keyframes: { 
-            glow: { '0%': { boxShadow: '0 0 10px #a855f7' }, '100%': { boxShadow: '0 0 20px #fbbf24' } },
-            fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } }
-          },
+          keyframes: { glow: { '0%': { boxShadow: '0 0 10px #a855f7' }, '100%': { boxShadow: '0 0 20px #fbbf24' } }, fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } } },
         },
       },
     }
@@ -41,7 +33,7 @@
 
   <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-      <a href="#" class="text-2xl font-cinzel text-accent-gold">CROWN Hearthstonebois</a>
+      <a href="#" class="text-2xl font-cinzel text-accent-gold"><i class="fas fa-crown mr-2"></i> Hearthstonebois</a>
       <div class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-accent-gold">Home</a>
         <a href="#stand" class="hover:text-accent-gold">Stand</a>
@@ -56,7 +48,7 @@
       <h1 class="text-5xl md:text-7xl font-cinzel text-accent-gold mb-4 animate-glow">Seizoen 1</h1>
       <p class="text-xl md:text-2xl text-accent-purple mb-8">Pieter • Chillz • Kipknots</p>
       <div id="countdown" class="countdown mb-10"><span id="games-left">20</span> potjes te gaan</div>
-      <p class="text-lg">Vul na elk potje het formulier in → site update automatisch!</p>
+      <p class="text-lg">Update de stand door <strong>index.html</strong> te bewerken in GitHub!</p>
     </div>
   </section>
 
@@ -81,14 +73,23 @@
 
   <footer class="bg-primary/95 py-8 mt-auto text-center">
     <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois</p>
-    <p class="text-xs">© 2025 • Automatisch met Google Forms</p>
+    <p class="text-xs">© 2025 • Handmatig bijgewerkt in GitHub</p>
   </footer>
 
   <script>
-    const SHEET_ID = '1AbCdEfGhIjKlMnOpQrStUvWxYz'; // ← Ik vul dit in
-    const API_KEY = 'AIzaSyAbCdEfGhIjKlMnOpQrStUvWxYz123456'; // ← Ik vul dit in
-    const RANGE = 'A:Z';
+    // === UPDATE HIER: PLAATSEN TOEVOEGEN ===
+    const players = [
+      { name: "Pieter", tag: "Pieterhvh#2102", placements: [] },
+      { name: "Chillz", tag: "Chillz#2925", placements: [] },
+      { name: "Kipknots", tag: "Kipknots#21143", placements: [] }
+    ];
 
+    // === HALL OF FAME (verwijder // bij einde seizoen) ===
+    const hallOfFame = [
+      // { season: 1, winner: "Pieter", date: "29 okt 2025", points: 98 }
+    ];
+
+    // === FOTO'S ===
     const playerImages = {
       pieter: "https://i.imgur.com/yxF4fv8.jpg",
       'pieter-crown': "https://i.imgur.com/2jv8C3v.jpg",
@@ -99,79 +100,57 @@
     };
 
     const pointsMap = { 1: 7, 2: 5, 3: 3 };
+    const MAX_GAMES = 20;
 
-    async function loadData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const rows = data.values.slice(1); // skip header
+    function calcPoints(p) { return p.reduce((s, x) => s + (pointsMap[x] || 0), 0); }
+    function calcAvg(p) { return p.length ? (p.reduce((a,b)=>a+b,0)/p.length).toFixed(2) : '0.00'; }
 
-      const players = { Pieter: { placements: [], tag: "Pieterhvh#2102" }, Chillz: { placements: [], tag: "Chillz#2925" }, Kipknots: { placements: [], tag: "Kipknots#21143" } };
-      const hall = [];
-
-      rows.forEach(r => {
-        if (r[0] === 'RESULT') {
-          players.Pieter.placements.push(parseInt(r[1]));
-          players.Chillz.placements.push(parseInt(r[2]));
-          players.Kipknots.placements.push(parseInt(r[3]));
-        } else if (r[0] === 'HALL') {
-          hall.push({ season: r[1], winner: r[2], date: r[3], points: r[4] });
-        }
-      });
-
-      render(players, hall);
-    }
-
-    function render(players, hall) {
-      const sorted = Object.entries(players).sort((a,b) => calcPoints(b[1].placements) - calcPoints(a[1].placements));
-      const leader = sorted[0][0].toLowerCase();
+    function render() {
+      const sorted = [...players].sort((a,b) => calcPoints(b.placements) - calcPoints(a.placements));
+      const leader = sorted[0]?.name.toLowerCase();
 
       // Stand
-      document.getElementById('stand-body').innerHTML = sorted.map(([name, p], i) => `
+      document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
         <tr class="hover:bg-slate-800">
-          <td class="p-4 font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
-          <td class="p-4">${name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' CROWN':''}</td>
+          <td class="p-4 font-bold ${i===0?'text-accent-gold animate-pulse':''}">${i+1}</td>
+          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
           <td class="p-4">${p.placements.length}</td>
           <td class="p-4 font-bold text-accent-gold">${calcPoints(p.placements)}</td>
-          <td class="p-4">${avg(p.placements)}</td>
+          <td class="p-4">${calcAvg(p.placements)}</td>
         </tr>
       `).join('');
 
       // Spelers
-      document.getElementById('players-grid').innerHTML = Object.entries(players).map(([name, p]) => {
-        const isLeader = name.toLowerCase() === leader;
-        const img = playerImages[name.toLowerCase() + (isLeader ? '-crown' : '')];
+      document.getElementById('players-grid').innerHTML = players.map(p => {
+        const isLeader = p.name.toLowerCase() === leader;
+        const img = playerImages[p.name.toLowerCase() + (isLeader ? '-crown' : '')] || playerImages[p.name.toLowerCase()];
         return `<div class="bg-primary/80 backdrop-blur rounded-xl p-8 card-glow text-center">
           <img src="${img}" class="player-img mx-auto mb-4 ${isLeader?'crown':''}">
-          <h3 class="text-2xl font-cinzel text-accent-gold">${name}</h3>
+          <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}</h3>
           <p class="text-accent-purple text-sm mb-4">${p.tag}</p>
           <div class="text-3xl font-bold text-accent-gold">${calcPoints(p.placements)}</div>
-          <p class="text-xs mb-4">Potjes: ${p.placements.length} | Gem. ${avg(p.placements)}</p>
+          <p class="text-xs mb-4">Potjes: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
         </div>`;
       }).join('');
 
-      // Hall of Fame
+      // Hall
       const hallGrid = document.getElementById('hall-grid');
-      hallGrid.innerHTML = hall.length ? hall.map(h => `
+      hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
         <div class="bg-primary/80 backdrop-blur rounded-xl p-8 text-center card-glow">
-          <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-3xl">TROPHY</div>
+          <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-3xl">🏆</div>
           <h3 class="text-xl font-cinzel text-accent-gold">${h.winner}</h3>
           <p class="text-accent-purple">Seizoen ${h.season}</p>
           <p class="text-lg font-bold text-accent-gold">${h.points} punten</p>
           <p class="text-sm">${h.date}</p>
         </div>
-      `).join('') : '<p class="col-span-3 text-center text-gray-400">Nog geen winnaars...</p>';
+      `).join('') : '<p class="col-span-3 text-center text-gray-400 py-12">Nog geen winnaars...</p>';
 
       // Countdown
-      const played = Math.max(...Object.values(players).map(p => p.placements.length));
-      document.getElementById('games-left').textContent = Math.max(0, 20 - played);
+      const played = Math.max(...players.map(p => p.placements.length));
+      document.getElementById('games-left').textContent = Math.max(0, MAX_GAMES - played);
     }
 
-    function calcPoints(arr) { return arr.reduce((s,p) => s + (pointsMap[p] || 0), 0); }
-    function avg(arr) { return arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(2) : '0.00'; }
-
-    loadData();
-    setInterval(loadData, 60000); // update elke minuut
+    render();
   </script>
 </body>
 </html>
