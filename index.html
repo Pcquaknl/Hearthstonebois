@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hearthstonebois - S2 Arena</title>
-  <!-- KROON IN TABBLAD -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -70,6 +69,8 @@
     .player-img.rank-1 { border-color: #ffd700; box-shadow: 0 0 40px #ffd700; animation: championPulse 2s infinite; }
     .player-img.rank-2 { border-color: #c0c0c0; box-shadow: 0 0 30px #c0c0c0; }
     .player-img.rank-3 { border-color: #cd7f32; box-shadow: 0 0 30px #cd7f32; }
+    .player-img.kipknots-clickable, .player-img.chillz-clickable { cursor: pointer; }
+    .player-img.kipknots-clickable:hover, .player-img.chillz-clickable:hover { transform: scale(1.05); border-color: #FFD700 !important; }
 
     .placement-box { display: inline-block; width: 36px; height: 36px; margin: 4px; font-weight: bold; font-size: 1rem; border-radius: 10px; text-align: center; line-height: 36px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); color: white; transition: transform 0.2s; }
     .placement-box:hover { transform: scale(1.2); }
@@ -102,7 +103,6 @@
       .chart-container { height: 300px; }
     }
 
-    /* ANDRÉ RIEU VLAGGEN ANIMATIE */
     @keyframes fall {
       to { 
         transform: translateY(120vh) rotate(1080deg); 
@@ -117,11 +117,6 @@
   <button onclick="document.documentElement.classList.toggle('dark')" class="dark-mode-toggle">
     <span class="fas fa-moon text-accent-gold text-xl"></span>
   </button>
-
-  <!-- ANDRÉ RIEU AUDIO -->
-  <audio id="andre-rieu" preload="auto">
-    <source src="https://cdn.freesound.org/previews/689/689346_5674468-lq.mp3" type="audio/mpeg">
-  </audio>
 
   <!-- CARD FLIP GELUID -->
   <audio id="newgame" src="https://hebbars.github.io/hearthstone-card-flip.mp3" preload="auto"></audio>
@@ -214,8 +209,8 @@
 
   <!-- Footer -->
   <footer class="bg-primary/95 py-8 mt-auto text-center border-t border-accent-gold/20">
-    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.3</p>
-    <p class="text-xs">© 2025 • Klik op Kipknots voor André Rieu • GitHub Pages</p>
+    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.16</p>
+    <p class="text-xs">© 2025 • Kipknots = België | Chillz = Mexicano | Pieterhvh = (Rickroll verwijderd)</p>
   </footer>
 
   <!-- JS -->
@@ -249,42 +244,55 @@
     function winrate(p) { return p.length ? (p.filter(x => x === 1).length / p.length * 100).toFixed(1) : '0.0'; }
     function top4rate(p) { return p.length ? (p.filter(x => x <= 4).length / p.length * 100).toFixed(1) : '0.0'; }
 
-    // ANDRÉ RIEU + BELGISCHE VLAGGENSTORM
+    // BELGIË VLAGGEN STORM VOOR KIPKNOTS
     function kipknotsBelgianStorm() {
-      const audio = document.getElementById('andre-rieu');
-      audio.currentTime = 0;
-      audio.play();
-
       let flagCount = 0;
       const interval = setInterval(() => {
-        if (flagCount >= 120) {
-          clearInterval(interval);
-          setTimeout(() => audio.pause(), 3000);
-          return;
-        }
-
-        const flag = document.createElement('div');
-        flag.innerHTML = 'België';
-        flag.style.position = 'fixed';
-        flag.style.fontSize = Math.random() * 35 + 25 + 'px';
-        flag.style.left = Math.random() * 100 + 'vw';
-        flag.style.top = '-60px';
-        flag.style.zIndex = '9999';
-        flag.style.pointerEvents = 'none';
-        flag.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-        flag.style.transform = `rotate(${Math.random() * 360}deg)`;
+        if (flagCount >= 120) { clearInterval(interval); return; }
+        const flag = document.createElement('img');
+        flag.src = 'https://cdn.countryflags.com/thumbs/belgium/flag-round-250.png';
+        const size = Math.random() * 50 + 35;
+        flag.style.cssText = `
+          position:fixed; width:${size}px; height:${size}px;
+          left:${Math.random() * 100}vw; top:-100px; z-index:9999;
+          pointer-events:none; animation:fall ${Math.random() * 3 + 2}s linear forwards;
+          transform:rotate(${Math.random() * 720}deg);
+        `;
         document.body.appendChild(flag);
-
-        setTimeout(() => flag.remove(), 5000);
+        setTimeout(() => flag.remove(), 6000);
         flagCount++;
-      }, 40);
+      }, 35);
 
-      confetti({
-        particleCount: 200,
-        spread: 120,
-        origin: { y: 0.3 },
-        colors: ['#ED2939', '#FFCD00', '#000000']
-      });
+      confetti({ particleCount: 250, spread: 100, origin: { y: 0.3 }, colors: ['#ED2939', '#FFCD00', '#000000'], scalar: 1.2 });
+      setTimeout(() => {
+        confetti({ particleCount: 100, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ED2939', '#FFCD00'] });
+        confetti({ particleCount: 100, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#000000', '#FFCD00'] });
+      }, 500);
+    }
+
+    // MEXICANO STORM VOOR CHILLZ
+    function chillzMexicanStorm() {
+      let mexicanoCount = 0;
+      const interval = setInterval(() => {
+        if (mexicanoCount >= 120) { clearInterval(interval); return; }
+        const mexicano = document.createElement('img');
+        mexicano.src = 'https://i.imgur.com/SuMAOKg.png';
+        const size = Math.random() * 70 + 50;
+        mexicano.style.cssText = `
+          position:fixed; width:${size}px; left:${Math.random() * 100}vw; top:-100px; z-index:9999;
+          pointer-events:none; animation:fall ${Math.random() * 3 + 2}s linear forwards;
+          transform:rotate(${Math.random() * 360}deg);
+        `;
+        document.body.appendChild(mexicano);
+        setTimeout(() => mexicano.remove(), 5000);
+        mexicanoCount++;
+      }, 35);
+
+      confetti({ particleCount: 250, spread: 100, origin: { y: 0.3 }, colors: ['#009B3A', '#FFFFFF', '#CE1126'] });
+      setTimeout(() => {
+        confetti({ particleCount: 100, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#009B3A', '#FFFFFF'] });
+        confetti({ particleCount: 100, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#CE1126', '#FFFFFF'] });
+      }, 500);
     }
 
     function renderGraph() {
@@ -296,9 +304,7 @@
         const cumulative = [];
         let sum = 0;
         for (let i = 0; i < totalGames; i++) {
-          if (i < p.placements.length) {
-            sum += pointsMap[p.placements[i]] || 0;
-          }
+          if (i < p.placements.length) sum += pointsMap[p.placements[i]] || 0;
           cumulative.push(sum);
         }
         return {
@@ -338,7 +344,7 @@
       const remaining = Math.max(0, GAMES_PER_HEAT - totalGames);
 
       if (totalGames > previousGames) {
-        document.getElementById('newgame').play();
+        document.getElementById('newgame').play().catch(() => {});
       }
       previousGames = totalGames;
 
@@ -349,12 +355,11 @@
 
         let imgHtml;
         if (p.name === 'Kipknots') {
-          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" 
-                          onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'"
-                          onclick="kipknotsBelgianStorm()" style="cursor: pointer; border: 6px solid #FFD700;">`;
+          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass} kipknots-clickable" data-name="Kipknots" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'" title="Klik voor België vlaggen!">`;
+        } else if (p.name === 'Chillz') {
+          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass} chillz-clickable" data-name="Chillz" onerror="this.src='https://i.imgur.com/13KDsWO.jpg'" title="Klik voor Mexicano's!">`;
         } else {
-          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" 
-                          onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">`;
+          imgHtml = `<img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" onerror="this.src='https://i.imgur.com/yxF4fv8.jpg'">`;
         }
 
         const historyBoxes = p.placements.map(pos => {
@@ -394,6 +399,19 @@
 
       document.getElementById('games-left').textContent = remaining;
       renderGraph();
+
+      // EVENT DELEGATION – RICKROLL VERWIJDERD
+      const grid = document.getElementById('players-grid');
+      grid.addEventListener('click', function(e) {
+        const img = e.target.closest('img');
+        if (!img) return;
+
+        if (img.classList.contains('kipknots-clickable')) {
+          kipknotsBelgianStorm();
+        } else if (img.classList.contains('chillz-clickable')) {
+          chillzMexicanStorm();
+        }
+      });
     }
 
     window.addEventListener('load', render);
