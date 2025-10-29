@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hearthstonebois - Battlegrounds Season 2</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 août100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,11 +12,11 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: { 'bg-dark': '#0f172a', 'primary': '#1e293b', 'accent-gold': '#fbbf24', 'accent-purple': '#a855f7', 'kipknots-gold': '#ffd700' },
+          colors: { 'bg-dark': '#0f172a', 'primary': '#1e293b', 'accent-gold': '#fbbf24', 'accent-purple': '#a855f7' },
           fontFamily: { 'cinzel': ['Cinzel', 'serif'], 'roboto': ['Roboto', 'sans-serif'] },
-          animation: { glow: 'glow 2s ease-in-out infinite alternate', fadeIn: 'fadeIn 0.8s ease-out', pulseSlow: 'pulse 3s infinite' },
+          animation: { glow: 'glow 2s ease-in-out infinite alternate', fadeIn: 'fadeIn 0.8s ease-out' },
           keyframes: { 
-            glow: { '0%': { boxShadow: '0 0 15px #a855f7' }, '100%': { boxShadow: '0 0 30px #fbbf24' } },
+            glow: { '0%': { boxShadow: '0 0 10px #a855f7' }, '100%': { boxShadow: '0 0 20px #fbbf24' } },
             fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } }
           },
         },
@@ -27,12 +27,13 @@
     body { background-color: #0f172a; background-image: url('https://images.unsplash.com/photo-1550745162-546e6c9e2a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); background-attachment: fixed; background-size: cover; background-blend-mode: overlay; color: #e2e8f0; font-family: 'Roboto', sans-serif; }
     .hero-overlay { background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.85)); }
     .card-glow:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(251,191,36,0.4); transition: all 0.3s ease; }
-    .countdown { font-family: 'Cinzel', serif; font-size: 3rem; color: #fbbf24; text-shadow: 0 0 20px #a855f7; animation: glow 2s infinite alternate; }
+    .countdown { font-family: 'Cinzel', serif; font-size: 2.5rem; color: #fbbf24; text-shadow: 0 0 10px #a855f7; }
+    .games-remaining { font-size: 1.8rem; color: #fbbf24; font-weight: bold; background: rgba(30,41,59,0.7); padding: 8px 24px; border-radius: 50px; display: inline-block; margin-top: 12px; }
     .player-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fbbf24; transition: all 0.3s ease; }
-    .player-img.crown { border-color: #ffd700; box-shadow: 0 0 25px #ffd700; }
+    .player-img.crown { border-color: #ffd700; box-shadow: 0 0 20px #ffd700; }
     .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .table-container table { min-width: 600px; }
-    .kipknots-legend { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
+    .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -40,13 +41,13 @@
   <!-- Nav -->
   <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-      <a href="#" class="text-2xl font-cinzel text-accent-gold"><i class="fas fa-flag-checkered mr-2"></i> Hearthstonebois</a>
+      <a href="#" class="text-2xl font-cinzel text-accent-gold"><i class="fas fa-crown mr-2"></i> Hearthstonebois</a>
       <div class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-accent-gold">Home</a>
         <a href="#stand" class="hover:text-accent-gold">Huidige Stand</a>
-        <a href="#spelers" class="hover:text-accent-gold">Heats</a>
+        <a href="#spelers" class="hover:text-accent-gold">Spelers</a>
         <a href="#hall" class="hover:text-accent-gold">Hall of Fame</a>
-        <a href="#kipknots-legend" class="hover:text-kipknots-gold">Kipknots Legend</a>
+        <a href="#season1-legend" class="hover:text-accent-gold">Season 1 Legend</a>
       </div>
     </div>
   </nav>
@@ -56,10 +57,13 @@
     <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
       <h1 class="text-5xl md:text-7xl font-cinzel text-accent-gold mb-4 animate-glow">Season 2</h1>
       <p class="text-xl md:text-2xl text-accent-purple mb-8">Pieterhvh • Chillz • Kipknots</p>
-      <div class="countdown mb-10">
-        <span id="games-left">20</span> GAMES REMAINING
+      <div class="countdown mb-6">
+        <span id="games-left">20</span> heats te gaan
       </div>
-      <p class="text-lg max-w-3xl mx-auto">Elke heat is een race. Wie pakt de pole position? 🏎️</p>
+      <div class="games-remaining">
+        <span id="games-left2">20</span> GAMES REMAINING
+      </div>
+      <p class="text-lg max-w-3xl mx-auto mt-8">Maximaal 20 heats. Wie claimt de kroon?</p>
     </div>
   </section>
 
@@ -72,10 +76,10 @@
           <thead class="bg-accent-purple/30">
             <tr>
               <th class="p-4">#</th>
-              <th class="p-4">Racer</th>
+              <th class="p-4">Speler</th>
               <th class="p-4">Heats</th>
               <th class="p-4">Punten</th>
-              <th class="p-4">Gem. Positie</th>
+              <th class="p-4">Gem. Plaats</th>
             </tr>
           </thead>
           <tbody id="stand-body"></tbody>
@@ -84,10 +88,10 @@
     </div>
   </section>
 
-  <!-- Spelers / Heats -->
+  <!-- Spelers -->
   <section id="spelers" class="py-16 bg-primary/50">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Racers</h2>
+      <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Strijders</h2>
       <div id="players-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
     </div>
   </section>
@@ -100,28 +104,28 @@
     </div>
   </section>
 
-  <!-- ODE AAN KIPKNOTS -->
-  <section id="kipknots-legend" class="py-20 bg-gradient-to-b from-kipknots-gold/10 to-transparent">
+  <!-- SEASON 1 LEGEND: KIPKNOTS -->
+  <section id="season1-legend" class="py-20">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <h2 class="text-5xl font-cinzel text-kipknots-gold mb-8 animate-pulseSlow">🏆 KIPKNOTS – SEASON 1 CHAMPION 🏆</h2>
-      <div class="kipknots-legend rounded-2xl p-10 max-w-4xl mx-auto card-glow">
-        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-kipknots-gold shadow-2xl">
-        <p class="text-2xl font-cinzel text-kipknots-gold mb-4">"Hij kwam, hij zag, hij domineerde."</p>
-        <p class="text-lg italic mb-6">— <strong>Alle heats van Season 1 gewonnen</strong>. Geen tegenstander. Geen genade. Alleen maar 1e plaatsen.</p>
-        <p class="text-xl">Een legende is geboren. 🏁</p>
+      <h2 class="text-5xl font-cinzel text-accent-gold mb-8">👑 Season 1 Legend: Kipknots 👑</h2>
+      <div class="legend-section rounded-2xl p-10 max-w-4xl mx-auto card-glow">
+        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-accent-gold shadow-2xl">
+        <p class="text-2xl font-cinzel text-accent-gold mb-4">"De onbetwiste koning van Season 1"</p>
+        <p class="text-lg italic mb-6">— <strong>Alle heats gewonnen</strong>. Geen verlies. Alleen maar 1e plaatsen.</p>
+        <p class="text-xl">Een legende is geboren. 🏆</p>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="bg-primary/95 py-8 mt-auto text-center">
-    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois Racing League</p>
+    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois</p>
     <p class="text-xs">© 2025 • Powered by GitHub Pages</p>
   </footer>
 
   <!-- JS -->
   <script>
-    // === UPDATE HIER: HEATS (1 = 1e, 2 = 2e, ..., 8 = 8e) ===
+    // === UPDATE HIER: HEATS (1 = 1e, 8 = 8e) ===
     const players = [
       { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8] },
       { name: "Chillz", tag: "Chillz#2925", placements: [8] },
@@ -156,7 +160,7 @@
       // Stand
       document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
         <tr class="hover:bg-slate-800">
-          <td class="p-4 font-bold ${i===0?'text-accent-gold animate-pulse':''}">${i+1}</td>
+          <td class="p-4 font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
           <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
           <td class="p-4">${p.placements.length}</td>
           <td class="p-4 font-bold text-accent-gold">${calcPoints(p.placements)}</td>
@@ -182,7 +186,7 @@
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
         <div class="bg-primary/80 backdrop-blur rounded-xl p-6 text-center card-glow">
-          <img src="${h.crownImg}" class="w-24 h-24 rounded-full mx-auto mb-3 border-4 border-kipknots-gold">
+          <img src="${h.crownImg}" class="w-24 h-24 rounded-full mx-auto mb-3 border-4 border-accent-gold">
           <h3 class="text-lg font-cinzel text-accent-gold">${h.winner}</h3>
           <p class="text-sm text-accent-purple">Heat ${h.heat}</p>
           <p class="text-accent-gold font-bold">${h.points} pts</p>
@@ -192,14 +196,14 @@
 
       // Countdown
       const played = Math.max(...players.map(p => p.placements.length));
-      document.getElementById('games-left').textContent = Math.max(0, MAX_GAMES - played);
+      const remaining = Math.max(0, MAX_GAMES - played);
+      document.getElementById('games-left').textContent = remaining;
+      document.getElementById('games-left2').textContent = remaining;
     }
 
-    // Laad bij start + fallback voor GitHub Pages
     window.addEventListener('load', () => {
       render();
-      // Forceer herlaad na 2 sec als afbeeldingen missen
-      setTimeout(render, 2000);
+      setTimeout(render, 2000); // fallback voor GitHub Pages
     });
   </script>
 </body>
