@@ -13,16 +13,19 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: { 'bg-dark': '#0f172a', 'primary': '#1e293b', 'accent-gold': '#fbbf24', 'accent-purple': '#a855f7' },
+          colors: { 'bg-dark': '#0f172a', 'primary': '#1e293b', 'accent-gold': '#fbbf24', 'accent-purple': '#a855f7', 'champion-gold': '#ffd700' },
           fontFamily: { 'cinzel': ['Cinzel', 'serif'], 'roboto': ['Roboto', 'sans-serif'] },
           animation: { 
             glow: 'glow 2s ease-in-out infinite alternate', 
             fadeIn: 'fadeIn 0.8s ease-out',
-            pulseCrown: 'pulse 2s infinite'
+            float: 'float 3s ease-in-out infinite',
+            championPulse: 'championPulse 2s infinite'
           },
           keyframes: { 
             glow: { '0%': { textShadow: '0 0 10px #a855f7' }, '100%': { textShadow: '0 0 30px #fbbf24' } },
-            fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } }
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+            championPulse: { '0%, 100%': { boxShadow: '0 0 20px #ffd700' }, '50%': { boxShadow: '0 0 40px #ffd700, 0 0 60px #ff6b6b' } }
           },
         },
       },
@@ -33,7 +36,7 @@
     .hero-overlay { background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.85)); }
     .card-glow:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(251,191,36,0.4); transition: all 0.3s ease; }
     .season-title { font-size: 4.5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(251,191,36,0.5); animation: glow 3s infinite alternate; }
-    .crown-icon { font-size: 3.5rem; color: #fbbf24; filter: drop-shadow(0 0 15px #fbbf24); animation: pulseCrown 2s infinite; }
+    .crown-icon { font-size: 3.5rem; color: #fbbf24; filter: drop-shadow(0 0 15px #fbbf24); animation: float 3s infinite; }
     .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
     .player-img { width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 6px solid #fbbf24; transition: all 0.3s ease; }
     .player-img.crown { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; }
@@ -41,10 +44,14 @@
     .table-container table { min-width: 600px; width: 100%; }
     .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
     .match-history { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; word-break: break-all; }
-    /* Mobiel: alles gecentreerd */
+    .champion-card { position: relative; overflow: hidden; border: 3px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0f172a); }
+    .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.1), transparent); opacity: 0; transition: opacity 0.5s; }
+    .champion-card:hover::before { opacity: 1; }
+    .champion-crown { font-size: 4rem; color: #ffd700; filter: drop-shadow(0 0 20px #ffd700); animation: championPulse 2s infinite; }
     @media (max-width: 768px) {
       .player-img { width: 180px; height: 180px; }
       .games-remaining { font-size: 1.6rem; padding: 8px 20px; }
+      .champion-crown { font-size: 3rem; }
     }
   </style>
 </head>
@@ -53,7 +60,7 @@
   <!-- Nav -->
   <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-      <a href="#" class="text-2xl font-cinzel text-accent-gold"><i class="fas fa-crown mr-2"></i> Hearthstonebois</a>
+      <a href="#" class="text-2xl font-cinzel text-accent-gold"><span class="fas fa-crown mr-2"></span> Hearthstonebois</a>
       <div class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-accent-gold">Home</a>
         <a href="#stand" class="hover:text-accent-gold">Huidige Stand</a>
@@ -68,9 +75,9 @@
   <section id="home" class="hero-overlay py-20 text-center">
     <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
       <div class="flex justify-center items-center gap-4 mb-4">
-        <div class="crown-icon">Crown</div>
+        <div class="crown-icon">👑</div>
         <h1 class="season-title">SEASON 2</h1>
-        <div class="crown-icon">Crown</div>
+        <div class="crown-icon">👑</div>
       </div>
       <p class="text-xl md:text-2xl text-accent-purple mb-8">Pieterhvh • Chillz • Kipknots</p>
       <div class="games-remaining">
@@ -80,7 +87,7 @@
     </div>
   </section>
 
-  <!-- Huidige Stand (Mobiel scrollbaar) -->
+  <!-- Huidige Stand -->
   <section id="stand" class="py-16">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">Huidige Stand</h2>
@@ -109,23 +116,25 @@
     </div>
   </section>
 
-  <!-- Hall of Fame S2 (GROOT & BELANGRIJK) -->
-  <section id="hall" class="py-20">
+  <!-- HALL OF FAME S2 – EPISCHE ODE -->
+  <section id="hall" class="py-24 bg-gradient-to-b from-transparent via-primary/20 to-transparent">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-5xl font-cinzel text-accent-gold text-center mb-16 animate-fadeIn">Hall of Fame S2</h2>
-      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center"></div>
+      <h2 class="text-6xl font-cinzel text-champion-gold text-center mb-16 animate-fadeIn" style="text-shadow: 0 0 30px #ffd700;">
+        <span class="fas fa-trophy mr-4"></span> HALL OF FAME S2 <span class="fas fa-trophy ml-4"></span>
+      </h2>
+      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center"></div>
     </div>
   </section>
 
-  <!-- SEASON 1 LEGEND: KIPKNOTS (kleiner) -->
+  <!-- SEASON 1 LEGEND: KIPKNOTS (klein) -->
   <section id="season1-legend" class="py-16 bg-primary/30">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <h2 class="text-4xl font-cinzel text-accent-gold mb-6">Crown Season 1 Legend: Kipknots Crown</h2>
+      <h2 class="text-4xl font-cinzel text-accent-gold mb-6">👑 Season 1 Legend: Kipknots 👑</h2>
       <div class="legend-section rounded-2xl p-8 max-w-3xl mx-auto card-glow">
         <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent-gold shadow-xl">
         <p class="text-xl font-cinzel text-accent-gold mb-3">"De onbetwiste koning van Season 1"</p>
         <p class="text-base italic mb-4">— Geen verlies. Alleen maar 1e plaatsen.</p>
-        <p class="text-lg">Trophy</p>
+        <p class="text-lg">🏆</p>
       </div>
     </div>
   </section>
@@ -145,7 +154,7 @@
       { name: "Kipknots", tag: "Kipknots#21143", placements: [8] }
     ];
 
-    // === HALL OF FAME S2 ===
+    // === HALL OF FAME S2 – EPISCH ===
     const hallOfFame = [
       { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
     ];
@@ -176,7 +185,7 @@
       document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
         <tr class="hover:bg-slate-800">
           <td class="p-4 font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
-          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' Crown':''}</td>
+          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
           <td class="p-4">${p.placements.length}</td>
           <td class="p-4 font-bold text-accent-gold">${calcPoints(p.placements)}</td>
           <td class="p-4">${calcAvg(p.placements)}</td>
@@ -199,17 +208,18 @@
         </div>`;
       }).join('');
 
-      // Hall of Fame S2
+      // HALL OF FAME S2 – EPISCH
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
-        <div class="bg-primary/80 backdrop-blur rounded-xl p-6 text-center card-glow max-w-xs">
-          <img src="${h.crownImg}" class="w-28 h-28 rounded-full mx-auto mb-3 border-6 border-accent-gold">
-          <h3 class="text-xl font-cinzel text-accent-gold">${h.winner}</h3>
-          <p class="text-sm text-accent-purple">Heat ${h.heat}</p>
-          <p class="text-accent-gold font-bold text-lg">${h.points} pts</p>
-          <p class="text-xs opacity-75">${h.date}</p>
+        <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm">
+          <div class="champion-crown mb-4">👑</div>
+          <img src="${h.crownImg}" class="w-32 h-32 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
+          <h3 class="text-2xl font-cinzel text-champion-gold mb-2">Champion of Heat ${h.heat}</h3>
+          <p class="text-xl font-bold text-accent-gold">${h.winner}</p>
+          <p class="text-3xl font-bold text-champion-gold my-2">${h.points} pts</p>
+          <p class="text-sm text-accent-purple opacity-80">${h.date}</p>
         </div>
-      `).join('') : '<p class="col-span-4 text-center text-gray-400 py-12">Nog geen heat-winnaars</p>';
+      `).join('') : '<p class="col-span-4 text-center text-gray-400 py-16 text-xl">Nog geen kampioenen. Wie wordt de eerste?</p>';
 
       // Games Remaining
       document.getElementById('games-left').textContent = remaining;
