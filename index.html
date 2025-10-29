@@ -51,7 +51,7 @@
       <div class="hidden md:flex space-x-6">
         <a href="#home" class="hover:text-accent-gold">Home</a>
         <a href="#stand" class="hover:text-accent-gold">Huidige Stand</a>
-        <a href="#spelers" class="hover:text-accent-gold">Spelers</a>
+        <a href="#spelers" class="hover:text-accent-gold">Strijders</a>
         <a href="#hall" class="hover:text-accent-gold">Hall of Fame</a>
         <a href="#season1-legend" class="hover:text-accent-gold">Season 1 Legend</a>
       </div>
@@ -118,8 +118,8 @@
       <div class="legend-section rounded-2xl p-10 max-w-4xl mx-auto card-glow">
         <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-accent-gold shadow-2xl">
         <p class="text-2xl font-cinzel text-accent-gold mb-4">"De onbetwiste koning van Season 1"</p>
-        <p class="text-lg italic mb-6">— <strong>Alle heats gewonnen</strong>. Geen verlies. Alleen maar 1e plaatsen.</p>
-        <p class="text-xl">Een legende is geboren. 🏆</p>
+        <p class="text-lg italic mb-6">— Geen verlies. Alleen maar 1e plaatsen.</p>
+        <p class="text-xl">🏆</p>
       </div>
     </div>
   </section>
@@ -141,7 +141,7 @@
 
     // === HALL OF FAME – PAS HIER AAN (alleen na 20 games) ===
     const hallOfFame = [
-      // { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
+    { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
     ];
 
     // === FOTO'S ===
@@ -201,7 +201,7 @@
           <p class="text-accent-gold font-bold">${h.points} pts</p>
           <p class="text-xs opacity-75">${h.date}</p>
         </div>
-      `).join('') : '<p class="col-span-4 text-center text-gray-400 py-12">Nog geen heat-winnaars. 20 games = 1 winnaar!</p>';
+      `).join('') : '<p class="col-span-4 text-center text-gray-400 py-12">Nog geen heat-winnaars</p>';
 
       // Games Remaining
       document.getElementById('games-left').textContent = remaining;
@@ -214,3 +214,4 @@
   </script>
 </body>
 </html>
+
