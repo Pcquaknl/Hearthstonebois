@@ -1,185 +1,140 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="nl" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hearthstonebois - S2</title>
+  <title>Hearthstonebois - S2 Arena</title>
   <!-- KROON IN TABBLAD -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: { 
-            'bg-dark': '#0f172a', 
+            'bg-dark': '#0a0e17', 
             'primary': '#1e293b', 
             'accent-gold': '#fbbf24', 
             'accent-purple': '#a855f7', 
             'champion-gold': '#ffd700',
             'silver': '#c0c0c0',
             'bronze': '#cd7f32',
-            'light-purple': '#d8b4fe'
+            'light-purple': '#d8b4fe',
+            'win': '#10b981',
+            'loss': '#ef4444'
           },
           fontFamily: { 'cinzel': ['Cinzel', 'serif'], 'roboto': ['Roboto', 'sans-serif'] },
           animation: { 
             glow: 'glow 2s ease-in-out infinite alternate', 
             fadeIn: 'fadeIn 0.8s ease-out',
             float: 'float 3s ease-in-out infinite',
-            championPulse: 'championPulse 2s infinite'
+            championPulse: 'championPulse 2s infinite',
+            bounceIn: 'bounceIn 0.6s ease-out',
+            slideUp: 'slideUp 0.5s ease-out'
           },
           keyframes: { 
             glow: { '0%': { textShadow: '0 0 10px #a855f7' }, '100%': { textShadow: '0 0 30px #fbbf24' } },
             fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
             float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-            championPulse: { '0%, 100%': { boxShadow: '0 0 20px #ffd700' }, '50%': { boxShadow: '0 0 40px #ffd700, 0 0 60px #ff6b6b' } }
+            championPulse: { '0%, 100%': { boxShadow: '0 0 20px #ffd700' }, '50%': { boxShadow: '0 0 50px #ffd700, 0 0 80px #ff6b6b' } },
+            bounceIn: { '0%': { transform: 'scale(0.3)', opacity: 0 }, '50%': { transform: 'scale(1.1)' }, '70%': { transform: 'scale(0.9)' }, '100%': { transform: 'scale(1)', opacity: 1 } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } }
           },
         },
       },
     }
   </script>
   <style>
-    body { background-color: #0f172a; background-image: url('https://images.unsplash.com/photo-1550745162-546e6c9e2a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); background-attachment: fixed; background-size: cover; background-blend-mode: overlay; color: #e2e8f0; font-family: 'Roboto', sans-serif; }
-    .hero-overlay { background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.85)); }
-    .card-glow:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(251,191,36,0.4); transition: all 0.3s ease; }
-    .season-title { font-size: 4.5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(251,191,36,0.5); animation: glow 3s infinite alternate; }
+    :root { --mana-blue: #4fc3f7; --mana-red: #e53935; }
+    body { background-color: #0a0e17; background-image: url('https://images.unsplash.com/photo-1550745162-546e6c9e2a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); background-attachment: fixed; background-size: cover; background-blend-mode: overlay; color: #e2e8f0; font-family: 'Roboto', sans-serif; }
+    .hero-overlay { background: linear-gradient(135deg, rgba(10,14,23,0.98), rgba(30,41,59,0.9)); }
+    .card-glow:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(251,191,36,0.5); transition: all 0.3s ease; }
+    .season-title { font-size: 5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(251,191,36,0.6); animation: glow 3s infinite alternate; }
 
-    /* KROON 👑 – WERKT OVERAL */
-    .crown-👑 {
-      font-size: 3.5rem;
-      color: #fbbf24;
-      filter: drop-shadow(0 0 15px #fbbf24);
-      animation: float 3s infinite;
-      display: inline-block;
-    }
+    .crown-👑 { font-size: 4rem; color: #fbbf24; filter: drop-shadow(0 0 20px #fbbf24); animation: float 3s infinite; display: inline-block; }
+    .games-remaining { font-size: 2rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.9); padding: 12px 36px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 3px solid #fbbf24; animation: bounceIn 1s; }
 
-    .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
-
-    /* PUNTENTELLING – ONDERAAN */
-    .points-table {
-      background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.8));
-      border: 2px solid #fbbf24;
-      border-radius: 16px;
-      padding: 16px;
-      max-width: 600px;
-      margin: 24px auto;
-      backdrop-blur-sm;
-      box-shadow: 0 8px 32px rgba(251,191,36,0.2);
-    }
-    .points-table h3 {
-      font-family: 'Cinzel', serif;
-      font-size: 1.5rem;
-      color: #fbbf24;
-      text-align: center;
-      margin-bottom: 12px;
-      text-shadow: 0 0 15px rgba(251,191,36,0.4);
-    }
-    .points-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px dashed rgba(251,191,36,0.2);
-    }
+    .points-table { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(10,14,23,0.85)); border: 2px solid #fbbf24; border-radius: 16px; padding: 16px; max-width: 600px; margin: 24px auto; backdrop-blur-sm; box-shadow: 0 8px 32px rgba(251,191,36,0.3); }
+    .points-table h3 { font-family: 'Cinzel', serif; font-size: 1.6rem; color: #fbbf24; text-align: center; margin-bottom: 12px; text-shadow: 0 0 15px rgba(251,191,36,0.5); }
+    .points-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(251,191,36,0.3); font-size: 1.1rem; }
     .points-row:last-child { border-bottom: none; }
     .points-row .rank { font-weight: bold; color: #fff; }
     .points-row .pts { font-weight: bold; color: #fbbf24; }
 
-    /* FOTO RANDEN – RANK SPECIFIEK */
-    .player-img {
-      width: 240px; height: 240px; object-fit: cover; border-radius: 50%; transition: all 0.3s ease;
-      border: 6px solid #fbbf24;
-    }
-    .player-img.rank-1 { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; animation: glow 2s infinite alternate; }
-    .player-img.rank-2 { border-color: #c0c0c0; box-shadow: 0 0 25px #c0c0c0; }
-    .player-img.rank-3 { border-color: #cd7f32; box-shadow: 0 0 25px #cd7f32; }
+    .player-img { width: 260px; height: 260px; object-fit: cover; border-radius: 50%; transition: all 0.4s ease; border: 6px solid #fbbf24; }
+    .player-img.rank-1 { border-color: #ffd700; box-shadow: 0 0 40px #ffd700; animation: championPulse 2s infinite; }
+    .player-img.rank-2 { border-color: #c0c0c0; box-shadow: 0 0 30px #c0c0c0; }
+    .player-img.rank-3 { border-color: #cd7f32; box-shadow: 0 0 30px #cd7f32; }
 
-    /* TABEL FIX VOOR MOBIEL */
-    .table-container { 
-      overflow-x: auto; 
-      -webkit-overflow-scrolling: touch; 
-      border-radius: 1rem;
-      margin: 0 -1rem;
-      padding: 0 1rem;
-    }
-    .table-container table { 
-      min-width: 600px; 
-      width: 100%; 
-      table-layout: auto;
-    }
-    .table-container th, .table-container td { 
-      white-space: nowrap; 
-      padding: 0.75rem 0.5rem; 
-      font-size: 0.875rem;
-    }
-    .table-container thead th { 
-      background: #6b21a8; 
-      color: white; 
-      font-weight: 600;
-    }
-
-    /* KLEUR PER PLEK IN MATCH HISTORY */
-    .placement-box {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      margin: 3px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      text-align: center;
-      line-height: 32px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      color: white;
-    }
+    .placement-box { display: inline-block; width: 36px; height: 36px; margin: 4px; font-weight: bold; font-size: 1rem; border-radius: 10px; text-align: center; line-height: 36px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); color: white; transition: transform 0.2s; }
+    .placement-box:hover { transform: scale(1.2); }
     .placement-1 { background: #ffd700; color: #1a1a1a; }
     .placement-2 { background: #c0c0c0; color: #1a1a1a; }
     .placement-3 { background: #cd7f32; color: white; }
     .placement-4 { background: #d8b4fe; color: #1a1a1a; }
     .placement-default { background: #a855f7; color: white; }
 
-    .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
-    .champion-card { position: relative; overflow: hidden; border: 3px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0f172a); }
-    .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.1), transparent); opacity: 0; transition: opacity 0.5s; }
+    .legend-section { background: linear-gradient(135deg, #1e293b, #0a0e17); border: 3px solid #ffd700; border-radius: 1.5rem; }
+    .champion-card { position: relative; overflow: hidden; border: 4px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0a0e17); border-radius: 1.5rem; }
+    .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.15), transparent); opacity: 0; transition: opacity 0.5s; }
     .champion-card:hover::before { opacity: 1; }
-    .champion-crown { font-size: 4rem; color: #ffd700; filter: drop-shadow(0 0 20px #ffd700); animation: championPulse 2s infinite; }
+    .champion-crown { font-size: 5rem; color: #ffd700; filter: drop-shadow(0 0 25px #ffd700); animation: championPulse 2s infinite; }
+
+    .stat-badge { background: rgba(30,41,59,0.8); border: 1px solid #fbbf24; border-radius: 12px; padding: 4px 10px; font-size: 0.8rem; margin: 2px; display: inline-block; }
+
+    .dark-mode-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000; background: #1e293b; padding: 0.75rem; border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer; transition: all 0.3s; }
+    .dark-mode-toggle:hover { transform: scale(1.1); }
+
+    .chart-container { position: relative; height: 400px; background: rgba(30,41,59,0.9); border-radius: 16px; padding: 16px; backdrop-blur-sm; box-shadow: 0 8px 32px rgba(251,191,36,0.2); }
 
     @media (max-width: 768px) {
       .player-img { width: 180px; height: 180px; }
-      .games-remaining { font-size: 1.6rem; padding: 8px 20px; }
-      .champion-crown { font-size: 3rem; }
-      .season-title { font-size: 3rem; }
-      .crown-👑 { font-size: 2.5rem; }
-      .table-container { margin: 0 -1.5rem; padding: 0 1.5rem; }
-      .table-container th, .table-container td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
-      .placement-box { width: 28px; height: 28px; line-height: 28px; font-size: 0.8rem; margin: 2px; }
-      .points-table { padding: 12px; margin: 16px 8px; }
-      .points-row { font-size: 0.9rem; }
+      .games-remaining { font-size: 1.6rem; padding: 10px 24px; }
+      .champion-crown { font-size: 3.5rem; }
+      .season-title { font-size: 3.5rem; }
+      .crown-👑 { font-size: 2.8rem; }
+      .placement-box { width: 30px; height: 30px; line-height: 30px; font-size: 0.8rem; }
+      .chart-container { height: 300px; }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
+  <!-- DARK MODE TOGGLE -->
+  <button onclick="document.documentElement.classList.toggle('dark')" class="dark-mode-toggle">
+    <span class="fas fa-moon text-accent-gold text-xl"></span>
+  </button>
+
+  <!-- AUDIO -->
+  <audio id="victory" src="https://hebbars.github.io/hearthstone-victory.mp3" preload="auto"></audio>
+  <audio id="newgame" src="https://hebbars.github.io/hearthstone-card-flip.mp3" preload="auto"></audio>
+
   <!-- Nav -->
-  <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-lg">
+  <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-xl border-b border-accent-gold/20">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-      <a href="#" class="text-2xl font-cinzel text-accent-gold"><span class="fas fa-crown mr-2"></span> Hearthstonebois</a>
-      <div class="hidden md:flex space-x-6">
-        <a href="#home" class="hover:text-accent-gold">Home</a>
-        <a href="#stand" class="hover:text-accent-gold">Huidige Stand</a>
-        <a href="#spelers" class="hover:text-accent-gold">Strijders</a>
-        <a href="#hall" class="hover:text-accent-gold">Hall of Fame S2</a>
-        <a href="#season1-legend" class="hover:text-accent-gold">Season 1 Legend</a>
+      <a href="#" class="text-2xl font-cinzel text-accent-gold flex items-center gap-2">
+        <span class="fas fa-crown"></span> Hearthstonebois
+      </a>
+      <div class="hidden md:flex space-x-6 text-sm">
+        <a href="#home" class="hover:text-accent-gold transition">Home</a>
+        <a href="#spelers" class="hover:text-accent-gold transition">Strijders</a>
+        <a href="#graph" class="hover:text-accent-gold transition">Puntenverloop</a>
+        <a href="#hall" class="hover:text-accent-gold transition">Hall of Fame</a>
+        <a href="#season1-legend" class="hover:text-accent-gold transition">S1 Legend</a>
       </div>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section id="home" class="hero-overlay py-20 text-center">
-    <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
-      <div class="flex justify-center items-center gap-4 mb-4">
+  <section id="home" class="hero-overlay py-24 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-4 animate-fadeIn relative z-10">
+      <div class="flex justify-center items-center gap-6 mb-6">
         <span class="crown-👑">👑</span>
         <h1 class="season-title">SEASON 2</h1>
         <span class="crown-👑">👑</span>
@@ -190,42 +145,31 @@
     </div>
   </section>
 
-  <!-- HUIDIGE STAND -->
-  <section id="stand" class="py-16">
+  <!-- STRIJDERS -->
+  <section id="spelers" class="py-16 bg-primary/50">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl md:text-5xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">HUIDIGE STAND</h2>
-      <div class="table-container bg-primary/80 backdrop-blur rounded-xl overflow-hidden shadow-2xl">
-        <table class="w-full text-left">
-          <thead>
-            <tr>
-              <th class="p-3">#</th>
-              <th class="p-3">Speler</th>
-              <th class="p-3">Games</th>
-              <th class="p-3">Punten</th>
-              <th class="p-3">Gem. Plaats</th>
-            </tr>
-          </thead>
-          <tbody id="stand-body" class="text-sm"></tbody>
-        </table>
+      <h2 class="text-5xl font-cinzel text-accent-gold text-center mb-12 animate-slideUp">DE STRIJDERS</h2>
+      <div id="players-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10 justify-items-center"></div>
+    </div>
+  </section>
+
+  <!-- PUNTENVERLOOP -->
+  <section id="graph" class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-5xl font-cinzel text-accent-gold text-center mb-12 animate-slideUp">PUNTENVERLOOP</h2>
+      <div class="chart-container">
+        <canvas id="pointsChart"></canvas>
       </div>
     </div>
   </section>
 
-  <!-- De Strijders -->
-  <section id="spelers" class="py-16 bg-primary/50">
-    <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Strijders</h2>
-      <div id="players-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center"></div>
-    </div>
-  </section>
-
-  <!-- HALL OF FAME S2 -->
+  <!-- HALL OF FAME -->
   <section id="hall" class="py-24 bg-gradient-to-b from-transparent via-primary/20 to-transparent">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-6xl font-cinzel text-champion-gold text-center mb-16 animate-fadeIn" style="text-shadow: 0 0 30px #ffd700;">
-        <span class="fas fa-trophy mr-4"></span> HALL OF FAME S2 <span class="fas fa-trophy ml-4"></span>
+      <h2 class="text-6xl font-cinzel text-champion-gold text-center mb-16 animate-bounceIn" style="text-shadow: 0 0 40px #ffd700;">
+        <span class="fas fa-🏆 mr-4"></span> HALL OF FAME S2 <span class="fas fa-🏆 ml-4"></span>
       </h2>
-      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center"></div>
+      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 justify-items-center"></div>
     </div>
   </section>
 
@@ -234,15 +178,15 @@
     <div class="max-w-7xl mx-auto px-4 text-center">
       <h2 class="text-4xl font-cinzel text-accent-gold mb-6">👑 Season 1 Legend: Kipknots 👑</h2>
       <div class="legend-section rounded-2xl p-8 max-w-3xl mx-auto card-glow">
-        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent-gold shadow-xl">
+        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-36 h-36 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
         <p class="text-xl font-cinzel text-accent-gold mb-3">"De onbetwiste koning van Season 1"</p>
         <p class="text-base italic mb-4">— Geen verlies. Alleen maar 1e plaatsen.</p>
-        <p class="text-lg">🏆</p>
+        <p class="text-2xl">🏆</p>
       </div>
     </div>
   </section>
 
-  <!-- PUNTENTELLING – ONDERAAN -->
+  <!-- PUNTENTELLING -->
   <section class="py-16">
     <div class="max-w-7xl mx-auto px-4">
       <div class="points-table">
@@ -257,21 +201,21 @@
   </section>
 
   <!-- Footer -->
-  <footer class="bg-primary/95 py-8 mt-auto text-center">
-    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois</p>
-    <p class="text-xs">© 2025 • Powered by GitHub Pages</p>
+  <footer class="bg-primary/95 py-8 mt-auto text-center border-t border-accent-gold/20">
+    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.2</p>
+    <p class="text-xs">© 2025 • Handmatig refresh • GitHub Pages</p>
   </footer>
 
   <!-- JS -->
   <script>
     const players = [
-      { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8, 2, 3, 5] },
-      { name: "Chillz", tag: "Chillz#2925", placements: [8, 1, 2, 1] },
-      { name: "Kipknots", tag: "Kipknots#21143", placements: [8, 7, 4, 2] }
+      { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8, 2, 3, 5, 1, 6, 4, 2] },
+      { name: "Chillz", tag: "Chillz#2925", placements: [8, 1, 2, 1, 3, 1, 2, 1] },
+      { name: "Kipknots", tag: "Kipknots#21143", placements: [8, 7, 4, 2, 5, 3, 1, 4] }
     ];
 
     const hallOfFame = [
-      { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
+      { heat: 1, winner: "Chillz", date: "29 okt 2025", points: 112, crownImg: "https://i.imgur.com/Cs1eQer.jpg" }
     ];
 
     const playerImages = {
@@ -285,27 +229,82 @@
 
     const pointsMap = { 1: 7, 2: 5, 3: 3, 4: 1, 5: 0, 6: 0, 7: 0, 8: 0 };
     const GAMES_PER_HEAT = 20;
+    let previousGames = 0;
+    let chart = null;
 
     function calcPoints(p) { return p.reduce((s, x) => s + (pointsMap[x] || 0), 0); }
     function calcAvg(p) { return p.length ? (p.reduce((a,b)=>a+b,0)/p.length).toFixed(2) : '0.00'; }
+    function winrate(p) { return p.length ? (p.filter(x => x === 1).length / p.length * 100).toFixed(1) : '0.0'; }
+    function top4rate(p) { return p.length ? (p.filter(x => x <= 4).length / p.length * 100).toFixed(1) : '0.0'; }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function renderGraph() {
+      const ctx = document.getElementById('pointsChart').getContext('2d');
+      const totalGames = Math.max(...players.map(p => p.placements.length));
+      const labels = Array.from({ length: totalGames }, (_, i) => `Game ${i + 1}`);
+
+      const datasets = players.map(p => {
+        const cumulative = [];
+        let sum = 0;
+        for (let i = 0; i < totalGames; i++) {
+          if (i < p.placements.length) {
+            sum += pointsMap[p.placements[i]] || 0;
+          }
+          cumulative.push(sum);
+        }
+        return {
+          label: p.name,
+          data: cumulative,
+          borderColor: p.name === 'Chillz' ? '#10b981' : p.name === 'Pieterhvh' ? '#3b82f6' : '#a855f7',
+          backgroundColor: 'transparent',
+          borderWidth: 3,
+          pointBackgroundColor: '#fbbf24',
+          pointRadius: 5,
+          tension: 0.3
+        };
+      });
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#e2e8f0', font: { family: 'Roboto', size: 14 } } },
+            tooltip: { backgroundColor: '#1e293b', titleColor: '#fbbf24', bodyColor: '#e2e8f0' }
+          },
+          scales: {
+            x: { grid: { color: '#334155' }, ticks: { color: '#e2e8f0' } },
+            y: { grid: { color: '#334155' }, ticks: { color: '#e2e8f0' }, beginAtZero: true }
+          }
+        }
+      });
+    }
 
     function render() {
       const sorted = [...players].sort((a,b) => calcPoints(b.placements) - calcPoints(a.placements));
       const totalGames = Math.max(...players.map(p => p.placements.length));
       const remaining = Math.max(0, GAMES_PER_HEAT - totalGames);
 
-      // Stand
-      document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
-        <tr class="hover:bg-slate-800">
-          <td class="font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
-          <td>${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
-          <td>${p.placements.length}</td>
-          <td class="font-bold text-accent-gold">${calcPoints(p.placements)}</td>
-          <td>${calcAvg(p.placements)}</td>
-        </tr>
-      `).join('');
+      // CONFETTI & SOUND
+      if (totalGames > previousGames) {
+        const lastGamePlacements = players.map(p => p.placements[p.placements.length - 1]);
+        const winner = lastGamePlacements.indexOf(1);
+        if (winner !== -1) {
+          triggerConfetti();
+          document.getElementById('victory').play();
+        } else {
+          document.getElementById('newgame').play();
+        }
+      }
+      previousGames = totalGames;
 
-      // Spelers – met rank-klassen
+      // Spelers
       document.getElementById('players-grid').innerHTML = sorted.map((p, i) => {
         const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
         const imgKey = p.name.toLowerCase() + (i === 0 ? '-crown' : '');
@@ -318,22 +317,26 @@
           else if (pos === 4) cls = 'placement-4';
           return `<div class="placement-box ${cls}">${pos}</div>`;
         }).join('');
-        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs">
+        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs animate-slideUp">
           <img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
           <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}${i===0?' 👑':''}</h3>
           <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
           <div class="text-3xl font-bold text-accent-gold mb-1">${calcPoints(p.placements)}</div>
-          <p class="text-xs mb-3">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
-          <div class="flex flex-wrap justify-center mt-3">${historyBoxes}</div>
+          <p class="text-xs mb-2">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
+          <div class="flex gap-1 justify-center flex-wrap">
+            <span class="stat-badge text-win">Win: ${winrate(p.placements)}%</span>
+            <span class="stat-badge text-accent-gold">Top 4: ${top4rate(p.placements)}%</span>
+          </div>
+          <div class="flex flex-wrap justify-center mt-4">${historyBoxes}</div>
         </div>`;
       }).join('');
 
       // Hall of Fame
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
-        <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm">
+        <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm animate-bounceIn">
           <div class="champion-crown mb-4">👑</div>
-          <img src="${h.crownImg}" class="w-32 h-32 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
+          <img src="${h.crownImg}" class="w-36 h-36 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
           <h3 class="text-2xl font-cinzel text-champion-gold mb-2">Champion of Heat ${h.heat}</h3>
           <p class="text-xl font-bold text-accent-gold">${h.winner}</p>
           <p class="text-3xl font-bold text-champion-gold my-2">${h.points} pts</p>
@@ -342,6 +345,9 @@
       `).join('') : '<p class="col-span-4 text-center text-gray-400 py-16 text-xl">Nog geen kampioenen. Wie wordt de eerste?</p>';
 
       document.getElementById('games-left').textContent = remaining;
+
+      // Update grafiek – stopt bij laatste game
+      renderGraph();
     }
 
     window.addEventListener('load', render);
