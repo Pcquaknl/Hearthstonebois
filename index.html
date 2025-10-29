@@ -46,8 +46,8 @@
     .card-glow:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(251,191,36,0.4); transition: all 0.3s ease; }
     .season-title { font-size: 4.5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(251,191,36,0.5); animation: glow 3s infinite alternate; }
 
-    /* KROON EMOJI – WERKT OVERAL */
-    .crown-emoji {
+    /* KROON 👑 – WERKT OVERAL */
+    .crown-👑 {
       font-size: 3.5rem;
       color: #fbbf24;
       filter: drop-shadow(0 0 15px #fbbf24);
@@ -87,8 +87,14 @@
     .points-row .rank { font-weight: bold; color: #fff; }
     .points-row .pts { font-weight: bold; color: #fbbf24; }
 
-    .player-img { width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 6px solid #fbbf24; transition: all 0.3s ease; }
-    .player-img.crown { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; }
+    /* FOTO RANDEN – RANK SPECIFIEK */
+    .player-img {
+      width: 240px; height: 240px; object-fit: cover; border-radius: 50%; transition: all 0.3s ease;
+      border: 6px solid #fbbf24;
+    }
+    .player-img.rank-1 { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; animation: glow 2s infinite alternate; }
+    .player-img.rank-2 { border-color: #c0c0c0; box-shadow: 0 0 25px #c0c0c0; }
+    .player-img.rank-3 { border-color: #cd7f32; box-shadow: 0 0 25px #cd7f32; }
 
     /* TABEL FIX VOOR MOBIEL */
     .table-container { 
@@ -128,11 +134,11 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       color: white;
     }
-    .placement-1 { background: #ffd700; color: #1a1a1a; } /* Goud */
-    .placement-2 { background: #c0c0c0; color: #1a1a1a; } /* Zilver */
-    .placement-3 { background: #cd7f32; color: white; }   /* Brons */
-    .placement-4 { background: #d8b4fe; color: #1a1a1a; } /* Lichtpaars */
-    .placement-default { background: #a855f7; color: white; } /* Paars (5-8) */
+    .placement-1 { background: #ffd700; color: #1a1a1a; }
+    .placement-2 { background: #c0c0c0; color: #1a1a1a; }
+    .placement-3 { background: #cd7f32; color: white; }
+    .placement-4 { background: #d8b4fe; color: #1a1a1a; }
+    .placement-default { background: #a855f7; color: white; }
 
     .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
     .champion-card { position: relative; overflow: hidden; border: 3px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0f172a); }
@@ -145,7 +151,7 @@
       .games-remaining { font-size: 1.6rem; padding: 8px 20px; }
       .champion-crown { font-size: 3rem; }
       .season-title { font-size: 3rem; }
-      .crown-emoji { font-size: 2.5rem; }
+      .crown-👑 { font-size: 2.5rem; }
       .table-container { margin: 0 -1.5rem; padding: 0 1.5rem; }
       .table-container th, .table-container td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
       .placement-box { width: 28px; height: 28px; line-height: 28px; font-size: 0.8rem; margin: 2px; }
@@ -174,9 +180,9 @@
   <section id="home" class="hero-overlay py-20 text-center">
     <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
       <div class="flex justify-center items-center gap-4 mb-4">
-        <span class="crown-emoji">👑</span>
+        <span class="crown-👑">👑</span>
         <h1 class="season-title">SEASON 2</h1>
-        <span class="crown-emoji">👑</span>
+        <span class="crown-👑">👑</span>
       </div>
       <div class="games-remaining">
         <span id="games-left">19</span> GAMES REMAINING
@@ -285,7 +291,6 @@
 
     function render() {
       const sorted = [...players].sort((a,b) => calcPoints(b.placements) - calcPoints(a.placements));
-      const leader = sorted[0]?.name.toLowerCase();
       const totalGames = Math.max(...players.map(p => p.placements.length));
       const remaining = Math.max(0, GAMES_PER_HEAT - totalGames);
 
@@ -300,10 +305,10 @@
         </tr>
       `).join('');
 
-      // Spelers
-      document.getElementById('players-grid').innerHTML = players.map(p => {
-        const isLeader = p.name.toLowerCase() === leader;
-        const imgKey = p.name.toLowerCase() + (isLeader ? '-crown' : '');
+      // Spelers – met rank-klassen
+      document.getElementById('players-grid').innerHTML = sorted.map((p, i) => {
+        const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+        const imgKey = p.name.toLowerCase() + (i === 0 ? '-crown' : '');
         const img = playerImages[imgKey] || playerImages[p.name.toLowerCase()];
         const historyBoxes = p.placements.map(pos => {
           let cls = 'placement-default';
@@ -314,8 +319,8 @@
           return `<div class="placement-box ${cls}">${pos}</div>`;
         }).join('');
         return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs">
-          <img src="${img}" class="player-img mx-auto mb-4 ${isLeader?'crown':''}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
-          <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}</h3>
+          <img src="${img}" class="player-img mx-auto mb-4 ${rankClass}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
+          <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}${i===0?' 👑':''}</h3>
           <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
           <div class="text-3xl font-bold text-accent-gold mb-1">${calcPoints(p.placements)}</div>
           <p class="text-xs mb-3">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
@@ -343,4 +348,3 @@
   </script>
 </body>
 </html>
-
