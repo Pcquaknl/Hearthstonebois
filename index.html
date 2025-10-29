@@ -35,11 +35,17 @@
     .season-title { font-size: 4.5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(251,191,36,0.5); animation: glow 3s infinite alternate; }
     .crown-icon { font-size: 3.5rem; color: #fbbf24; filter: drop-shadow(0 0 15px #fbbf24); animation: pulseCrown 2s infinite; }
     .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
-    .player-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fbbf24; transition: all 0.3s ease; }
-    .player-img.crown { border-color: #ffd700; box-shadow: 0 0 25px #ffd700; }
+    .player-img { width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 6px solid #fbbf24; transition: all 0.3s ease; }
+    .player-img.crown { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; }
     .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table-container table { min-width: 600px; }
+    .table-container table { min-width: 600px; width: 100%; }
     .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
+    .match-history { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; word-break: break-all; }
+    /* Mobiel: alles gecentreerd */
+    @media (max-width: 768px) {
+      .player-img { width: 180px; height: 180px; }
+      .games-remaining { font-size: 1.6rem; padding: 8px 20px; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -58,13 +64,13 @@
     </div>
   </nav>
 
-  <!-- HERO: SEASON 2 = EPIC -->
+  <!-- HERO: SEASON 2 -->
   <section id="home" class="hero-overlay py-20 text-center">
     <div class="max-w-7xl mx-auto px-4 animate-fadeIn">
       <div class="flex justify-center items-center gap-4 mb-4">
-        <div class="crown-icon">👑</div>
+        <div class="crown-icon">Crown</div>
         <h1 class="season-title">SEASON 2</h1>
-        <div class="crown-icon">👑</div>
+        <div class="crown-icon">Crown</div>
       </div>
       <p class="text-xl md:text-2xl text-accent-purple mb-8">Pieterhvh • Chillz • Kipknots</p>
       <div class="games-remaining">
@@ -74,7 +80,7 @@
     </div>
   </section>
 
-  <!-- Huidige Stand (Aantal GAMES) -->
+  <!-- Huidige Stand (Mobiel scrollbaar) -->
   <section id="stand" class="py-16">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">Huidige Stand</h2>
@@ -95,31 +101,31 @@
     </div>
   </section>
 
-  <!-- Spelers -->
+  <!-- De Strijders + Match History -->
   <section id="spelers" class="py-16 bg-primary/50">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Strijders</h2>
-      <div id="players-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+      <div id="players-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center"></div>
     </div>
   </section>
 
-  <!-- Hall of Fame (1 winnaar per 20 games) -->
-  <section id="hall" class="py-16">
+  <!-- Hall of Fame S2 (GROOT & BELANGRIJK) -->
+  <section id="hall" class="py-20">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">Hall of Fame S2</h2>
-      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+      <h2 class="text-5xl font-cinzel text-accent-gold text-center mb-16 animate-fadeIn">Hall of Fame S2</h2>
+      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center"></div>
     </div>
   </section>
 
-  <!-- SEASON 1 LEGEND: KIPKNOTS -->
-  <section id="season1-legend" class="py-20">
+  <!-- SEASON 1 LEGEND: KIPKNOTS (kleiner) -->
+  <section id="season1-legend" class="py-16 bg-primary/30">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <h2 class="text-5xl font-cinzel text-accent-gold mb-8">👑 Season 1 Legend: Kipknots 👑</h2>
-      <div class="legend-section rounded-2xl p-10 max-w-4xl mx-auto card-glow">
-        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-accent-gold shadow-2xl">
-        <p class="text-2xl font-cinzel text-accent-gold mb-4">"De onbetwiste koning van Season 1"</p>
-        <p class="text-lg italic mb-6">— Geen verlies. Alleen maar 1e plaatsen.</p>
-        <p class="text-xl">🏆</p>
+      <h2 class="text-4xl font-cinzel text-accent-gold mb-6">Crown Season 1 Legend: Kipknots Crown</h2>
+      <div class="legend-section rounded-2xl p-8 max-w-3xl mx-auto card-glow">
+        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent-gold shadow-xl">
+        <p class="text-xl font-cinzel text-accent-gold mb-3">"De onbetwiste koning van Season 1"</p>
+        <p class="text-base italic mb-4">— Geen verlies. Alleen maar 1e plaatsen.</p>
+        <p class="text-lg">Trophy</p>
       </div>
     </div>
   </section>
@@ -139,9 +145,9 @@
       { name: "Kipknots", tag: "Kipknots#21143", placements: [8] }
     ];
 
-    // === HALL OF FAME – PAS HIER AAN (alleen na 20 games) ===
+    // === HALL OF FAME S2 ===
     const hallOfFame = [
-    { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
+      { heat: 1, winner: "Kipknots", date: "29 okt 2025", points: 98, crownImg: "https://i.imgur.com/Ugp30J2.jpg" }
     ];
 
     // === FOTO'S ===
@@ -170,35 +176,37 @@
       document.getElementById('stand-body').innerHTML = sorted.map((p, i) => `
         <tr class="hover:bg-slate-800">
           <td class="p-4 font-bold ${i===0?'text-accent-gold':''}">${i+1}</td>
-          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' 👑':''}</td>
+          <td class="p-4">${p.name} <span class="text-xs text-accent-purple">(${p.tag})</span>${i===0?' Crown':''}</td>
           <td class="p-4">${p.placements.length}</td>
           <td class="p-4 font-bold text-accent-gold">${calcPoints(p.placements)}</td>
           <td class="p-4">${calcAvg(p.placements)}</td>
         </tr>
       `).join('');
 
-      // Spelers
+      // Spelers + Match History
       document.getElementById('players-grid').innerHTML = players.map(p => {
         const isLeader = p.name.toLowerCase() === leader;
         const imgKey = p.name.toLowerCase() + (isLeader ? '-crown' : '');
         const img = playerImages[imgKey] || playerImages[p.name.toLowerCase()];
-        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-8 card-glow text-center">
+        const history = p.placements.map(pos => `<span class="inline-block w-6 text-center">${pos}</span>`).join(' ');
+        return `<div class="bg-primary/80 backdrop-blur rounded-xl p-8 card-glow text-center max-w-xs">
           <img src="${img}" class="player-img mx-auto mb-4 ${isLeader?'crown':''}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
           <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}</h3>
-          <p class="text-accent-purple text-sm mb-4">${p.tag}</p>
-          <div class="text-3xl font-bold text-accent-gold">${calcPoints(p.placements)}</div>
-          <p class="text-xs mb-4">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
+          <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
+          <div class="text-3xl font-bold text-accent-gold mb-1">${calcPoints(p.placements)}</div>
+          <p class="text-xs mb-3">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
+          <div class="match-history">${history}</div>
         </div>`;
       }).join('');
 
-      // Hall of Fame
+      // Hall of Fame S2
       const hallGrid = document.getElementById('hall-grid');
       hallGrid.innerHTML = hallOfFame.length ? hallOfFame.map(h => `
-        <div class="bg-primary/80 backdrop-blur rounded-xl p-6 text-center card-glow">
-          <img src="${h.crownImg}" class="w-24 h-24 rounded-full mx-auto mb-3 border-4 border-accent-gold">
-          <h3 class="text-lg font-cinzel text-accent-gold">${h.winner}</h3>
+        <div class="bg-primary/80 backdrop-blur rounded-xl p-6 text-center card-glow max-w-xs">
+          <img src="${h.crownImg}" class="w-28 h-28 rounded-full mx-auto mb-3 border-6 border-accent-gold">
+          <h3 class="text-xl font-cinzel text-accent-gold">${h.winner}</h3>
           <p class="text-sm text-accent-purple">Heat ${h.heat}</p>
-          <p class="text-accent-gold font-bold">${h.points} pts</p>
+          <p class="text-accent-gold font-bold text-lg">${h.points} pts</p>
           <p class="text-xs opacity-75">${h.date}</p>
         </div>
       `).join('') : '<p class="col-span-4 text-center text-gray-400 py-12">Nog geen heat-winnaars</p>';
@@ -214,5 +222,3 @@
   </script>
 </body>
 </html>
-
-
