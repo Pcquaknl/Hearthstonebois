@@ -48,14 +48,14 @@
     .crown-icon { font-size: 3.5rem; color: #fbbf24; filter: drop-shadow(0 0 15px #fbbf24); animation: float 3s infinite; }
     .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
 
-    /* PUNTENTELLING – MOOI & GECENTREERD */
+    /* PUNTENTELLING – ONDERAAN */
     .points-table {
       background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.8));
       border: 2px solid #fbbf24;
       border-radius: 16px;
       padding: 16px;
       max-width: 600px;
-      margin: 24px auto 0;
+      margin: 24px auto;
       backdrop-blur-sm;
       box-shadow: 0 8px 32px rgba(251,191,36,0.2);
     }
@@ -140,7 +140,7 @@
       .table-container { margin: 0 -1.5rem; padding: 0 1.5rem; }
       .table-container th, .table-container td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
       .placement-box { width: 28px; height: 28px; line-height: 28px; font-size: 0.8rem; margin: 2px; }
-      .points-table { padding: 12px; margin: 16px 8px 0; }
+      .points-table { padding: 12px; margin: 16px 8px; }
       .points-row { font-size: 0.9rem; }
     }
   </style>
@@ -172,16 +172,6 @@
       <p class="text-xl md:text-2xl text-accent-purple mb-8">Pieterhvh • Chillz • Kipknots</p>
       <div class="games-remaining">
         <span id="games-left">19</span> GAMES REMAINING
-      </div>
-
-      <!-- PUNTENTELLING – MOOI & GECENTREERD -->
-      <div class="points-table">
-        <h3>Puntentelling per game</h3>
-        <div class="points-row"><span class="rank">1e</span> <span class="pts">7 punten</span></div>
-        <div class="points-row"><span class="rank">2e</span> <span class="pts">5 punten</span></div>
-        <div class="points-row"><span class="rank">3e</span> <span class="pts">3 punten</span></div>
-        <div class="points-row"><span class="rank">4e</span> <span class="pts">1 punt</span></div>
-        <div class="points-row"><span class="rank">5e-8e</span> <span class="pts">0 punten</span></div>
       </div>
     </div>
   </section>
@@ -238,6 +228,20 @@
     </div>
   </section>
 
+  <!-- PUNTENTELLING – ONDERAAN -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="points-table">
+        <h3>Puntentelling per game</h3>
+        <div class="points-row"><span class="rank">1e</span> <span class="pts">7 punten</span></div>
+        <div class="points-row"><span class="rank">2e</span> <span class="pts">5 punten</span></div>
+        <div class="points-row"><span class="rank">3e</span> <span class="pts">3 punten</span></div>
+        <div class="points-row"><span class="rank">4e</span> <span class="pts">1 punt</span></div>
+        <div class="points-row"><span class="rank">5e-8e</span> <span class="pts">0 punten</span></div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="bg-primary/95 py-8 mt-auto text-center">
     <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois</p>
@@ -247,9 +251,9 @@
   <!-- JS -->
   <script>
     const players = [
-      { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8, 4, 3, 2, 1] },
-      { name: "Chillz", tag: "Chillz#2925", placements: [8, 5, 4, 3, 2] },
-      { name: "Kipknots", tag: "Kipknots#21143", placements: [8, 7, 6, 5, 4] }
+      { name: "Pieterhvh", tag: "Pieterhvh#2102", placements: [8, 3, 2, 1] },
+      { name: "Chillz", tag: "Chillz#2925", placements: [8, 5, 4, 3] },
+      { name: "Kipknots", tag: "Kipknots#21143", placements: [8, 6, 5, 2] }
     ];
 
     const hallOfFame = [
