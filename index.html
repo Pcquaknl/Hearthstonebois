@@ -40,7 +40,7 @@
     .games-remaining { font-size: 1.9rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.8); padding: 10px 32px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 2px solid #fbbf24; }
     .player-img { width: 240px; height: 240px; object-fit: cover; border-radius: 50%; border: 6px solid #fbbf24; transition: all 0.3s ease; }
     .player-img.crown { border-color: #ffd700; box-shadow: 0 0 30px #ffd700; }
-    
+
     /* TABEL FIX VOOR MOBIEL */
     .table-container { 
       overflow-x: auto; 
@@ -65,8 +65,23 @@
       font-weight: 600;
     }
 
+    /* PAARSE VAKJES VOOR MATCH HISTORY */
+    .placement-box {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      margin: 2px;
+      background: #a855f7;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      text-align: center;
+      line-height: 28px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
     .legend-section { background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #ffd700; }
-    .match-history { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; word-break: break-all; }
     .champion-card { position: relative; overflow: hidden; border: 3px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0f172a); }
     .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.1), transparent); opacity: 0; transition: opacity 0.5s; }
     .champion-card:hover::before { opacity: 1; }
@@ -80,6 +95,7 @@
       .crown-icon { font-size: 2.5rem; }
       .table-container { margin: 0 -1.5rem; padding: 0 1.5rem; }
       .table-container th, .table-container td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
+      .placement-box { width: 24px; height: 24px; line-height: 24px; font-size: 0.75rem; }
     }
   </style>
 </head>
@@ -111,11 +127,21 @@
       <div class="games-remaining">
         <span id="games-left">19</span> GAMES REMAINING
       </div>
-      <p class="text-lg max-w-3xl mx-auto mt-8">20 games = 1 heat. Na 20 games → 1 winnaar in de Hall of Fame.</p>
+      <!-- PUNTENTELLING -->
+      <div class="mt-8 text-sm md:text-base max-w-2xl mx-auto bg-primary/60 backdrop-blur-sm rounded-xl p-4 border border-accent-purple/50">
+        <p class="font-bold text-accent-gold mb-2">Puntentelling per game:</p>
+        <p class="text-left leading-relaxed">
+          <span class="text-accent-gold">1e</span> → 7 pts | 
+          <span class="text-accent-gold">2e</span> → 5 pts | 
+          <span class="text-accent-gold">3e</span> → 3 pts | 
+          <span class="text-accent-gold">4e</span> → 1 pt | 
+          <span class="text-gray-400">5e-8e</span> → 0 pts
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- HUIDIGE STAND – MOBIEL PERFECT -->
+  <!-- HUIDIGE STAND -->
   <section id="stand" class="py-16">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl md:text-5xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">HUIDIGE STAND</h2>
@@ -136,7 +162,7 @@
     </div>
   </section>
 
-  <!-- De Strijders -->
+  <!-- De Strijders + PAARSE VAKJES -->
   <section id="spelers" class="py-16 bg-primary/50">
     <div class="max-w-7xl mx-auto px-4">
       <h2 class="text-4xl font-cinzel text-accent-gold text-center mb-12 animate-fadeIn">De Strijders</h2>
@@ -217,19 +243,19 @@
         </tr>
       `).join('');
 
-      // Spelers
+      // Spelers + PAARSE VAKJES
       document.getElementById('players-grid').innerHTML = players.map(p => {
         const isLeader = p.name.toLowerCase() === leader;
         const imgKey = p.name.toLowerCase() + (isLeader ? '-crown' : '');
         const img = playerImages[imgKey] || playerImages[p.name.toLowerCase()];
-        const history = p.placements.map(pos => `<span class="inline-block w-6 text-center">${pos}</span>`).join(' ');
+        const historyBoxes = p.placements.map(pos => `<div class="placement-box">${pos}</div>`).join('');
         return `<div class="bg-primary/80 backdrop-blur rounded-xl p-6 md:p-8 card-glow text-center max-w-xs">
           <img src="${img}" class="player-img mx-auto mb-4 ${isLeader?'crown':''}" onerror="this.src='https://i.imgur.com/Jevr2Rq.jpg'">
           <h3 class="text-2xl font-cinzel text-accent-gold">${p.name}</h3>
           <p class="text-accent-purple text-sm mb-2">${p.tag}</p>
           <div class="text-3xl font-bold text-accent-gold mb-1">${calcPoints(p.placements)}</div>
           <p class="text-xs mb-3">Games: ${p.placements.length} | Gem. ${calcAvg(p.placements)}</p>
-          <div class="match-history">${history}</div>
+          <div class="flex flex-wrap justify-center mt-3">${historyBoxes}</div>
         </div>`;
       }).join('');
 
