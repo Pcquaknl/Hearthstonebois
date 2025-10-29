@@ -186,6 +186,14 @@
       <div class="wednesday-close" onclick="closeWednesdayPopup()">SLUIT</div>
     </div>
   </div>
+
+ <!-- GELUID VOOR WOENSDAG (MP3) -->
+  <!-- VERVANG DEZE LINK MET JOUW MP3 -->
+  <audio id="wednesday-sound" preload="auto">
+    <source src="https://us-tuna-sounds-files.voicemod.net/77629ee3-9e82-48d2-889a-d4686540c6e5.mp3" type="audio/mpeg">
+    Jouw browser ondersteunt geen audio.
+  </audio>
+
   <!-- DARK MODE TOGGLE -->
   <button onclick="document.documentElement.classList.toggle('dark')" class="dark-mode-toggle">
     <span class="fas fa-moon text-accent-gold text-xl"></span>
@@ -312,14 +320,17 @@
     let previousGames = 0;
     let chart = null;
 
+    // GELUID OBJECT
+    const wednesdayAudio = document.getElementById('wednesday-sound');
+
     function calcPoints(p) { return p.reduce((s, x) => s + (pointsMap[x] || 0), 0); }
     function calcAvg(p) { return p.length ? (p.reduce((a,b)=>a+b,0)/p.length).toFixed(2) : '0.00'; }
     function winrate(p) { return p.length ? (p.filter(x => x === 1).length / p.length * 100).toFixed(1) : '0.0'; }
     function top4rate(p) { return p.length ? (p.filter(x => x <= 4).length / p.length * 100).toFixed(1) : '0.0'; }
 
- // WOENSDAG FROG LOGICA
+   // WOENSDAG FROG LOGICA
     function initWednesdayFrog() {
-      const today = new Date().getDay(); // 0=zo, 1=ma, ..., 3=wo
+      const today = new Date().getDay(); // 0=zo, 3=wo
       const frog = document.getElementById('wednesday-frog');
       if (today === 3) {
         frog.src = 'https://www.pikpng.com/pngl/b/577-5774824_it-is-wednesday-my-dudes-its-wednesday-my.png';
@@ -329,12 +340,18 @@
 
     function openWednesdayPopup() {
       document.getElementById('wednesday-overlay').style.display = 'flex';
-      // Confetti explosie
+      // GELUID AFSPELEN
+      wednesdayAudio.currentTime = 0;
+      wednesdayAudio.play().catch(() => console.log("Geluid geblokkeerd – gebruiker moet eerst interactie hebben"));
+      // Confetti
       confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#fbbf24', '#a855f7', '#10b981'] });
     }
 
     function closeWednesdayPopup() {
       document.getElementById('wednesday-overlay').style.display = 'none';
+      // GELUID STOPPEN
+      wednesdayAudio.pause();
+      wednesdayAudio.currentTime = 0;
     }
 
     // BELGIË VLAGGEN STORM VOOR KIPKNOTS
