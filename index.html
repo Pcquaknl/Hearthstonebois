@@ -93,6 +93,67 @@
 
     .chart-container { position: relative; height: 400px; background: rgba(30,41,59,0.9); border-radius: 16px; padding: 16px; backdrop-blur-sm; box-shadow: 0 8px 32px rgba(251,191,36,0.2); }
 
+/* WOENSDAG FROG */
+    .wednesday-frog {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      z-index: 9999;
+      animation: frogPulse 1.5s infinite;
+      filter: drop-shadow(0 0 10px #fbbf24);
+      transition: transform 0.2s;
+    }
+    .wednesday-frog:hover {
+      transform: scale(1.2);
+    }
+
+    /* WOENSDAG POPUP */
+    .wednesday-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+    .wednesday-modal {
+      background: #1e293b;
+      border: 4px solid #fbbf24;
+      border-radius: 2rem;
+      padding: 2rem;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(251,191,36,0.6);
+      animation: bounceIn 0.6s;
+    }
+    .wednesday-text {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fbbf24;
+      text-shadow: 0 0 20px #fbbf24;
+      line-height: 1.4;
+    }
+    .wednesday-close {
+      margin-top: 1.5rem;
+      background: #ef4444;
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .wednesday-close:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
     @media (max-width: 768px) {
       .player-img { width: 180px; height: 180px; }
       .games-remaining { font-size: 1.6rem; padding: 10px 24px; }
@@ -113,6 +174,18 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+<!-- WOENSDAG FROG (alleen op woensdag) -->
+  <img id="wednesday-frog" class="wednesday-frog" src="" alt="Wednesday Frog" style="display: none;" onclick="openWednesdayPopup()">
+
+  <!-- WOENSDAG POPUP -->
+  <div id="wednesday-overlay" class="wednesday-overlay">
+    <div class="wednesday-modal">
+      <div class="wednesday-text">
+        IT'S WEDNESDAY MY DUDES -- AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      </div>
+      <div class="wednesday-close" onclick="closeWednesdayPopup()">SLUIT</div>
+    </div>
+  </div>
   <!-- DARK MODE TOGGLE -->
   <button onclick="document.documentElement.classList.toggle('dark')" class="dark-mode-toggle">
     <span class="fas fa-moon text-accent-gold text-xl"></span>
@@ -243,6 +316,26 @@
     function calcAvg(p) { return p.length ? (p.reduce((a,b)=>a+b,0)/p.length).toFixed(2) : '0.00'; }
     function winrate(p) { return p.length ? (p.filter(x => x === 1).length / p.length * 100).toFixed(1) : '0.0'; }
     function top4rate(p) { return p.length ? (p.filter(x => x <= 4).length / p.length * 100).toFixed(1) : '0.0'; }
+
+ // WOENSDAG FROG LOGICA
+    function initWednesdayFrog() {
+      const today = new Date().getDay(); // 0=zo, 1=ma, ..., 3=wo
+      const frog = document.getElementById('wednesday-frog');
+      if (today === 3) {
+        frog.src = 'https://www.pikpng.com/pngl/b/577-5774824_it-is-wednesday-my-dudes-its-wednesday-my.png';
+        frog.style.display = 'block';
+      }
+    }
+
+    function openWednesdayPopup() {
+      document.getElementById('wednesday-overlay').style.display = 'flex';
+      // Confetti explosie
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#fbbf24', '#a855f7', '#10b981'] });
+    }
+
+    function closeWednesdayPopup() {
+      document.getElementById('wednesday-overlay').style.display = 'none';
+    }
 
     // BELGIË VLAGGEN STORM VOOR KIPKNOTS
     function kipknotsBelgianStorm() {
@@ -400,7 +493,7 @@
       document.getElementById('games-left').textContent = remaining;
       renderGraph();
 
-      // EVENT DELEGATION – RICKROLL VERWIJDERD
+      // EVENT DELEGATION
       const grid = document.getElementById('players-grid');
       grid.addEventListener('click', function(e) {
         const img = e.target.closest('img');
@@ -412,10 +505,20 @@
           chillzMexicanStorm();
         }
       });
+
+      // Sluit woensdag popup bij klik buiten
+      document.getElementById('wednesday-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeWednesdayPopup();
+      });
     }
 
-    window.addEventListener('load', render);
+    // Start alles
+    window.addEventListener('load', () => {
+      initWednesdayFrog();
+      render();
+    });
   </script>
 </body>
 </html>
+
 
