@@ -421,7 +421,7 @@
       //******* Player Object **********//
       //fps locking vars
       var fpsCounter = Date.now(), //custom timer to restrict fps
-          fps = 30;
+          fps = 60; // Verhoogd naar 60 voor vloeiendere gameplay
       //free falling counter
       var fallingCounter = Date.now();
       //Player
@@ -429,7 +429,7 @@
           //public properties
           //physics
           velocity: 2,
-          force: 0.15,
+          force: 0.2, // Iets verhoogd voor snellere val
           //positional
           x: 70,
           y: 20,
@@ -438,13 +438,14 @@
 
           //methods
           jump: function() {
-              this.velocity = -6;
+              this.velocity = -7; // Iets hogere sprong voor betere feel
           },
           fall: function() {
               var now = Date.now();
               if (now - fallingCounter > 1000 / fps) {
-                  if (this.velocity < 8) this.velocity += this.force;
-                  this.y += this.velocity;
+                fallingCounter = now; // Bugfix: reset de counter
+                if (this.velocity < 8) this.velocity += this.force;
+                this.y += this.velocity;
               }
           },
           hasCollided: function() {
@@ -626,7 +627,7 @@
       }
 
       //Register event handlers & kick off the game
-      window.onload = function() {
+      window.addEventListener('load', function() {
           c.addEventListener('click', function() {
               if (PLAYER_CONTROLS_ON) {
                   player.jump();
@@ -639,7 +640,7 @@
           });
 
           update();
-      };
+      });
     })();
   </script>
 </body>
