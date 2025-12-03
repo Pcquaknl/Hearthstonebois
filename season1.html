@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="nl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hearthstonebois - S1</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            'bg-dark': '#0a0e17', 
+            'primary': '#1e293b', 
+            'accent-gold': '#fbbf24', 
+            'accent-purple': '#a855f7', 
+            'champion-gold': '#ffd700',
+            'silver': '#c0c0c0',
+            'bronze': '#cd7f32',
+            'light-purple': '#d8b4fe',
+            'win': '#10b981',
+            'loss': '#ef4444'
+          },
+          fontFamily: { 'cinzel': ['Cinzel', 'serif'], 'roboto': ['Roboto', 'sans-serif'] },
+          animation: { 
+            glow: 'glow 2s ease-in-out infinite alternate', 
+            fadeIn: 'fadeIn 0.8s ease-out',
+            float: 'float 3s ease-in-out infinite',
+            championPulse: 'championPulse 2s infinite',
+            bounceIn: 'bounceIn 0.6s ease-out',
+            slideUp: 'slideUp 0.5s ease-out'
+          },
+          keyframes: { 
+            glow: { '0%': { textShadow: '0 0 10px #a855f7' }, '100%': { textShadow: '0 0 30px #fbbf24' } },
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+            championPulse: { '0%, 100%': { boxShadow: '0 0 20px #ffd700' }, '50%': { boxShadow: '0 0 50px #ffd700, 0 0 80px #ff6b6b' } },
+            bounceIn: { '0%': { transform: 'scale(0.3)', opacity: 0 }, '50%': { transform: 'scale(1.1)' }, '70%': { transform: 'scale(0.9)' }, '100%': { transform: 'scale(1)', opacity: 1 } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } }
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root { --mana-blue: #4fc3f7; --mana-red: #e53935; }
+    body { background-color: #0a0e17; background-image: url('https://images.unsplash.com/photo-1550745162-546e6c9e2a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'); background-attachment: fixed; background-size: cover; background-blend-mode: overlay; color: #e2e8f0; font-family: 'Roboto', sans-serif; }
+    .hero-overlay { background: linear-gradient(135deg, rgba(10,14,23,0.98), rgba(30,41,59,0.9)); }
+    .card-glow:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(251,191,36,0.5); transition: all 0.3s ease; }
+    .season-title { font-size: 5rem; font-weight: 900; background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px rgba(251,191,36,0.6); animation: glow 3s infinite alternate; }
+
+    .crown-👑 { font-size: 4rem; color: #fbbf24; filter: drop-shadow(0 0 20px #fbbf24); animation: float 3s infinite; display: inline-block; }
+    .games-remaining { font-size: 2rem; font-weight: bold; color: #fbbf24; background: rgba(30,41,59,0.9); padding: 12px 36px; border-radius: 50px; display: inline-block; margin-top: 16px; border: 3px solid #fbbf24; animation: bounceIn 1s; }
+
+    .points-table { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(10,14,23,0.85)); border: 2px solid #fbbf24; border-radius: 16px; padding: 16px; max-width: 600px; margin: 24px auto; backdrop-blur-sm; box-shadow: 0 8px 32px rgba(251,191,36,0.3); }
+    .points-table h3 { font-family: 'Cinzel', serif; font-size: 1.6rem; color: #fbbf24; text-align: center; margin-bottom: 12px; text-shadow: 0 0 15px rgba(251,191,36,0.5); }
+    .points-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(251,191,36,0.3); font-size: 1.1rem; }
+    .points-row:last-child { border-bottom: none; }
+    .points-row .rank { font-weight: bold; color: #fff; }
+    .points-row .pts { font-weight: bold; color: #fbbf24; }
+
+    .player-img { width: 260px; height: 260px; object-fit: cover; border-radius: 50%; transition: all 0.4s ease; border: 6px solid #fbbf24; }
+    .player-img.rank-1 { border-color: #ffd700; box-shadow: 0 0 40px #ffd700; animation: championPulse 2s infinite; }
+    .player-img.rank-2 { border-color: #c0c0c0; box-shadow: 0 0 30px #c0c0c0; }
+    .player-img.rank-3 { border-color: #cd7f32; box-shadow: 0 0 30px #cd7f32; }
+
+    .placement-box { display: inline-block; width: 36px; height: 36px; margin: 4px; font-weight: bold; font-size: 1rem; border-radius: 10px; text-align: center; line-height: 36px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); color: white; transition: transform 0.2s; }
+    .placement-box:hover { transform: scale(1.2); }
+    .placement-1 { background: #ffd700; color: #1a1a1a; }
+    .placement-2 { background: #c0c0c0; color: #1a1a1a; }
+    .placement-3 { background: #cd7f32; color: white; }
+    .placement-4 { background: #d8b4fe; color: #1a1a1a; }
+    .placement-default { background: #a855f7; color: white; }
+
+    .legend-section { background: linear-gradient(135deg, #1e293b, #0a0e17); border: 3px solid #ffd700; border-radius: 1.5rem; }
+    .champion-card { position: relative; overflow: hidden; border: 4px solid #ffd700; background: linear-gradient(145deg, #1e293b, #0a0e17); border-radius: 1.5rem; }
+    .champion-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.15), transparent); opacity: 0; transition: opacity 0.5s; }
+    .champion-card:hover::before { opacity: 1; }
+    .champion-crown { font-size: 5rem; color: #ffd700; filter: drop-shadow(0 0 25px #ffd700); animation: championPulse 2s infinite; }
+
+    .stat-badge { background: rgba(30,41,59,0.8); border: 1px solid #fbbf24; border-radius: 12px; padding: 4px 10px; font-size: 0.8rem; margin: 2px; display: inline-block; }
+
+    .chart-container { position: relative; height: 400px; background: rgba(30,41,59,0.9); border-radius: 16px; padding: 16px; backdrop-blur-sm; box-shadow: 0 8px 32px rgba(251,191,36,0.2); }
+
+    /* WOENSDAG FROG */
+    .wednesday-frog {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
+      z-index: 9999;
+      animation: frogPulse 1.5s infinite;
+      filter: drop-shadow(0 0 10px #fbbf24);
+      transition: transform 0.2s;
+    }
+    .wednesday-frog:hover { transform: scale(1.2); }
+
+    /* WOENSDAG POPUP */
+    .wednesday-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+    .wednesday-modal {
+      background: #1e293b;
+      border: 4px solid #fbbf24;
+      border-radius: 2rem;
+      padding: 2rem;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(251,191,36,0.6);
+      animation: bounceIn 0.6s;
+    }
+    .wednesday-text {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fbbf24;
+      text-shadow: 0 0 20px #fbbf24;
+      line-height: 1.4;
+    }
+    .wednesday-close {
+      margin-top: 1.5rem;
+      background: #ef4444;
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .wednesday-close:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .player-img { width: 180px; height: 180px; }
+      .games-remaining { font-size: 1.6rem; padding: 10px 24px; }
+      .champion-crown { font-size: 3.5rem; }
+      .season-title { font-size: 3.5rem; }
+      .crown-👑 { font-size: 2.8rem; }
+      .placement-box { width: 30px; height: 30px; line-height: 30px; font-size: 0.8rem; }
+      .chart-container { height: 300px; }
+    }
+
+    @keyframes frogPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Flappy Kipknots Styles */
+    #game-canvas {
+      border: 1px solid #fbbf24;
+      margin: 0 auto;
+      display: block;
+      background-color: #181818;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- WOENSDAG FROG -->
+  <img id="wednesday-frog" class="wednesday-frog" src="" alt="Wednesday Frog" style="display: none;" onclick="openWednesdayPopup()">
+
+  <!-- WOENSDAG POPUP -->
+  <div id="wednesday-overlay" class="wednesday-overlay">
+    <div class="wednesday-modal">
+      <div class="wednesday-text">IT'S WEDNESDAY MY DUDES</div>
+      <div class="wednesday-close" onclick="closeWednesdayPopup()">SLUIT</div>
+    </div>
+  </div>
+
+  <!-- GELUID -->
+  <audio id="wednesday-sound" preload="auto">
+    <source src="https://us-tuna-sounds-files.voicemod.net/77629ee3-9e82-48d2-889a-d4686540c6e5.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="newgame" src="https://hebbars.github.io/hearthstone-card-flip.mp3" preload="auto"></audio>
+
+  <!-- Nav -->
+  <nav class="bg-primary/95 backdrop-blur-sm sticky top-0 z-50 shadow-xl border-b border-accent-gold/20">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+      <a href="#" class="text-2xl font-cinzel text-accent-gold flex items-center gap-2">
+        <span class="fas fa-crown"></span> Hearthstonebois - SEASON 1
+      </a>
+      <div class="hidden md:flex space-x-6 text-sm items-center">
+        <a href="#season1-legend" class="hover:text-accent-gold transition">Season 1 Legend</a>
+        <a href="#hall" class="hover:text-accent-gold transition">Hall of Fame</a>
+        <a href="#game" class="hover:text-accent-gold transition">Flappy Kipknots</a>
+        <a href="index.html" class="hover:text-accent-gold transition">Naar Season 2</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SEASON 1 LEGEND -->
+  <section id="season1-legend" class="py-16 bg-primary/30">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-4xl font-cinzel text-accent-gold mb-6">Season 1 Legend: Kipknots</h2>
+      <div class="legend-section rounded-2xl p-8 max-w-3xl mx-auto card-glow">
+        <img src="https://i.imgur.com/Ugp30J2.jpg" alt="Kipknots met kroon" class="w-36 h-36 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
+        <p class="text-xl font-cinzel text-accent-gold mb-3">"De onbetwiste koning van Season 1"</p>
+        <p class="text-base italic mb-4">— Geen verlies. Alleen maar 1e plaatsen.</p>
+        <p class="text-2xl">👑</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HALL OF FAME -->
+  <section id="hall" class="py-24 bg-gradient-to-b from-transparent via-primary/20 to-transparent">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-6xl font-cinzel text-champion-gold text-center mb-16 animate-bounceIn" style="text-shadow: 0 0 40px #ffd700;">
+        <span class="fas fa-crown mr-4"></span> HALL OF FAME S1 <span class="fas fa-crown ml-4"></span>
+      </h2>
+      <div id="hall-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 justify-items-center"></div>
+    </div>
+  </section>
+
+  <!-- FLAPPY KIPKNOTS GAME -->
+  <section id="game" class="py-16 bg-primary/50">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-5xl font-cinzel text-accent-gold mb-12 animate-slideUp">FLAPPY KIPKNOTS</h2>
+      <p class="text-xl text-accent-purple mb-6">Klik om te springen en ontwijk de obstakels!</p>
+      <canvas id="game-canvas" width="640" height="480"></canvas>
+    </div>
+  </section>
+
+  <!-- PUNTENTELLING -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="points-table">
+        <h3>Puntentelling per game</h3>
+        <div class="points-row"><span class="rank">1e</span> <span class="pts">9 punten</span></div>
+        <div class="points-row"><span class="rank">2e</span> <span class="pts">7 punten</span></div>
+        <div class="points-row"><span class="rank">3e</span> <span class="pts">5.5 punten</span></div>
+        <div class="points-row"><span class="rank">4e</span> <span class="pts">5.5 punt</span></div>
+        <div class="points-row"><span class="rank">5e</span> <span class="pts">4 punten</span></div>
+        <div class="points-row"><span class="rank">6e</span> <span class="pts">3 punt</span></div>
+        <div class="points-row"><span class="rank">7e</span> <span class="pts">2 punt</span></div>
+        <div class="points-row"><span class="rank">8e</span> <span class="pts">1 punt</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-primary/95 py-8 mt-auto text-center border-t border-accent-gold/20">
+    <p class="text-accent-gold font-cinzel text-xl mb-2">Hearthstonebois 5.18</p>
+    <p class="text-xs">© 2025 • Barretakken United</p>
+  </footer>
+
+  <!-- JS for Hall of Fame -->
+  <script>
+    const playerImages = {
+      kipknots: "https://i.imgur.com/Jevr2Rq.jpg",
+      'kipknots-crown': "https://i.imgur.com/Ugp30J2.jpg"
+    };
+
+    const heats = [
+      { heat: 1, date: "3-7-25", winner: "Kipknots" },
+      { heat: 2, date: "13-7-25", winner: "Kipknots" },
+      { heat: 3, date: "28-7-25", winner: "Kipknots" },
+      { heat: 4, date: "1-9-25", winner: "Kipknots" },
+      { heat: 5, date: "13-9-25", winner: "Kipknots" },
+      { heat: 6, date: "13-10-25", winner: "Kipknots" },
+      { heat: 7, date: "15-11-25", winner: "Kipknots" },
+      { heat: 8, date: "2-12-25", winner: "Kipknots" }
+    ];
+
+    const wednesdayAudio = document.getElementById('wednesday-sound');
+
+    function getHallOfFame() {
+      return heats.map(h => ({
+        heat: h.heat,
+        winner: h.winner,
+        date: h.date,
+        crownImg: playerImages[h.winner.toLowerCase() + '-crown'] || playerImages[h.winner.toLowerCase()]
+      }));
+    }
+
+    function initWednesdayFrog() {
+      const today = new Date().getDay();
+      const frog = document.getElementById('wednesday-frog');
+      if (today === 3) {
+        frog.src = 'https://www.pikpng.com/pngl/b/577-5774824_it-is-wednesday-my-dudes-its-wednesday-my.png';
+        frog.style.display = 'block';
+      }
+    }
+
+    function openWednesdayPopup() {
+      document.getElementById('wednesday-overlay').style.display = 'flex';
+      wednesdayAudio.currentTime = 0;
+      wednesdayAudio.play().catch(() => {});
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#fbbf24', '#a855f7', '#10b981'] });
+    }
+
+    function closeWednesdayPopup() {
+      document.getElementById('wednesday-overlay').style.display = 'none';
+      wednesdayAudio.pause();
+      wednesdayAudio.currentTime = 0;
+    }
+
+    function render() {
+      const hallGrid = document.getElementById('hall-grid');
+      const hallData = getHallOfFame();
+      hallGrid.innerHTML = hallData.length ? hallData.map(h => `
+        <div class="champion-card rounded-2xl p-8 text-center card-glow transform transition-all duration-500 hover:scale-105 max-w-sm animate-bounceIn">
+          <div class="champion-crown mb-4">👑</div>
+          <img src="${h.crownImg}" class="w-36 h-36 rounded-full mx-auto mb-4 border-6 border-champion-gold shadow-2xl">
+          <h3 class="text-2xl font-cinzel text-champion-gold mb-2">Heat ${h.heat}</h3>
+          <p class="text-xl font-bold text-accent-gold">${h.winner}</p>
+          <p class="text-sm text-accent-purple opacity-80">${h.date}</p>
+        </div>
+      `).join('') : '<p class="col-span-4 text-center text-gray-400 py-16 text-xl">Nog geen kampioenen.</p>';
+
+      document.getElementById('wednesday-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeWednesdayPopup();
+      });
+    }
+
+    window.addEventListener('load', () => {
+      initWednesdayFrog();
+      render();
+    });
+  </script>
+
+  <!-- JS for Flappy Kipknots Game -->
+  <script>
+    (function() {
+      //Get canvas and context
+      var c   = document.getElementById('game-canvas'),
+          ctx = c.getContext('2d');
+
+      //Load assets
+      var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
+          playerImg = loadImage('https://i.imgur.com/Ugp30J2.jpg', 64, 64),  // Kipknots hoofd
+          enemyUpImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_up.png', 64, 316),
+          enemyDownImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_down.png', 64, 316);
+
+      var pointAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/point.mp3'),
+          loseAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/lose.mp3');
+
+      //Helper methods
+      function loadImage(src, width, height) {
+          var img = new Image(width, height);
+          img.src = src;
+          return img;
+      }
+
+      function randomIntFromInterval(min,max) {
+          return Math.floor(Math.random()*(max-min+1)+min);
+      }
+
+      var textAlpha = (function() {
+          var alpha = 1,
+              shouldIncrease = false;
+          return {
+              fluctuate: function() {
+                  if (alpha < 0) shouldIncrease = true;
+                  if (alpha > 1) shouldIncrease = false;
+
+                  if (shouldIncrease) alpha += 0.02;
+                  else alpha -= 0.02;
+
+                  return alpha;
+              },
+              get: function() {
+                  return alpha;
+              }
+          };
+      })();
+
+      //Game constants
+      var PLAYER_CONTROLS_ON = false;
+      var GAME_PLAYING = false;
+
+      //Classes & objects
+      //******* Score counter object **********//
+      var scoreCounter = {
+          //state
+          _score: 0,
+          //methods
+          increaseScore: function() {
+              this._score++;
+              pointAudio.play();
+          },
+          getScore: function() {
+              return this._score;
+          },
+          reset: function() {
+              this._score = 0;
+          }
+      };
+
+      //******* Background Constructor **********//
+      function Background(x, y, speed, img) {
+          this.x = x || 0;
+          this.y = y || 0;
+          this.img   = img || bgImg;
+          this.speed = speed || 1;
+      }
+      Background.prototype = {
+          move: function() {
+              this.x -= this.speed;
+              if (this.x <= -this.img.width) {
+                  this.x = c.width;
+              }
+          }
+      };
+
+      //******* Player Object **********//
+      //fps locking vars
+      var fpsCounter = Date.now(), //custom timer to restrict fps
+          fps = 30;
+      //free falling counter
+      var fallingCounter = Date.now();
+      //Player
+      player = {
+          //public properties
+          //physics
+          velocity: 2,
+          force: 0.15,
+          //positional
+          x: 70,
+          y: 20,
+          width: 64,
+          height: 64,
+
+          //methods
+          jump: function() {
+              this.velocity = -6;
+          },
+          fall: function() {
+              var now = Date.now();
+              if (now - fallingCounter > 1000 / fps) {
+                  if (this.velocity < 8) this.velocity += this.force;
+                  this.y += this.velocity;
+              }
+          },
+          hasCollided: function() {
+              var hasCollided = false;
+
+              var playerX  = this.x + this.width,
+                  playerTopY    = this.y,
+                  playerBottomY = this.y + this.height;
+
+              var enemyX = enemies[nextEnemyId].enemyDown.x + 40,
+                  enemyLookingDownY = enemies[nextEnemyId].enemyDown.y + enemies[nextEnemyId].enemyDown.img.height,
+                  enemyLookingUpY = enemies[nextEnemyId].enemyUp.y,
+                  enemyWidth = enemies[nextEnemyId].enemyDown.img.width;
+
+              //when the enemy is inside an obstacle
+              if (playerX > enemyX && playerX < enemyX + enemyWidth - 40) {
+                  //check for collision and tag player as collided if they hit an obstacle
+                  if (playerTopY < enemyLookingDownY || playerBottomY > enemyLookingUpY)
+                      hasCollided = true;
+              }
+
+              //if the player goes above/below screen tag as collided
+              if (playerBottomY < 0 || playerTopY > c.height) {
+                  hasCollided = true;
+              }
+
+              if (hasCollided & PLAYER_CONTROLS_ON) loseAudio.play();
+
+              //return collision result
+              return hasCollided;
+          },
+          reset: function() {
+              this.velocity = 2;
+              this.y = 20;
+          }
+      };
+
+      //******* Enemy Constructor **********//
+      //constants
+      var ENEMY_NUMBER = 5,     //how many sets of enemies
+          ENEMY_OFFSET = 300,   //horizontal distance between obstacles
+          ENEMY_DISTANCE = 120, //vertical opening between obstacles
+          MAX_YOFFSET = 50,
+          MIN_YOFFSET = -150;
+      //Enemy IDs
+      var nextEnemyId, lastEnemyId; // defined in setupEnemies()
+
+      function Enemy(id, y, yOffset, imgDirectionIsUp, speed, img) {
+          if (typeof id === 'undefined') throw new Error('Parameter ID must be defined');
+          this.id = id;
+          this.imgDirectionIsUp = typeof imgDirectionIsUp === 'undefined' ? true : imgDirectionIsUp;
+          this.yOffset = yOffset || 0;
+
+          this.x = c.width + id * ENEMY_OFFSET || 0;
+          if (this.imgDirectionIsUp) this.y = y + ENEMY_DISTANCE + this.yOffset || 0;
+          else this.y = y - ENEMY_DISTANCE + this.yOffset || 0;
+
+          this.speed = speed || 3;
+          this.img = img || (this.imgDirectionIsUp ? enemyUpImg : enemyDownImg);
+      }
+      Enemy.prototype = {
+          move: function() {
+              this.x -= this.speed;
+              if (this.x <= -this.img.width && this.imgDirectionIsUp) {
+                  //Set x of this enemy set to next enemy set + enemy offset
+                  this.x = enemies[this.id].enemyDown.x = enemies[lastEnemyId].enemyUp.x + ENEMY_OFFSET;
+                  //Set new random Y
+                  this.yOffset = enemies[this.id].enemyDown.yOffset = randomIntFromInterval(MIN_YOFFSET, MAX_YOFFSET);
+                  //Update last enemy ID
+                  lastEnemyId = lastEnemyId === ENEMY_NUMBER - 1 ? 0 : lastEnemyId + 1;
+              }
+              if (this.id === nextEnemyId && this.x + this.img.width < player.x + player.width) {
+                  //Update next enemy ID
+                  nextEnemyId = nextEnemyId === ENEMY_NUMBER - 1 ? 0 : nextEnemyId + 1;
+                  //Increase the score
+                  if (PLAYER_CONTROLS_ON) scoreCounter.increaseScore();
+              }
+          }
+      };
+
+      //Main functions
+      var updateLoop;
+      function update() {
+          draw();
+          updateLoop = window.requestAnimationFrame(update);
+      }
+
+      function draw() {
+          //Set font style
+          ctx.font = '48px Raleway';
+          //Clean canvas
+          ctx.clearRect(0, 0, c.width, c.height);
+          //Draw next frame with props
+          drawBackground();
+          //If game hasn't started or player lost show splash screen text
+          if (!GAME_PLAYING) {
+              ctx.strokeStyle = 'rgba(0,0,0,' + textAlpha.get() + ')';
+              ctx.strokeText('Klik om te starten', c.width / 2 - 230, 80);
+              ctx.fillStyle = 'rgba(255,255,255,' + textAlpha.get() + ')';
+              ctx.fillText('Klik om te starten', c.width / 2 - 230, 80);
+              textAlpha.fluctuate();
+          }
+          //If game is playing draw everything
+          else {
+              drawEnemies();
+              drawPlayer();
+              //Draw the score
+              ctx.fillStyle = 'black';
+              ctx.strokeText(scoreCounter.getScore(), c.width / 2 - 11, 51);
+              ctx.fillStyle = 'white';
+              ctx.fillText(scoreCounter.getScore(), c.width / 2 - 10, 50);
+          }
+      }
+
+      //Instantiate, draw and animate backgrounds
+      var bg1 = new Background(0, 0);
+      var bg2 = new Background(c.width, 0);
+
+      function drawBackground() {
+          ctx.drawImage(bg1.img, bg1.x, bg1.y);
+          ctx.drawImage(bg2.img, bg2.x, bg2.y);
+          bg1.move();
+          bg2.move();
+      }
+
+      //Instantiate and draw player
+      function drawPlayer() {
+          // Maak de player rond door clipping
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+          ctx.restore();
+
+          //move player
+          player.fall();
+          //collision check
+          if (player.hasCollided()) {
+              //deactivate player controls
+              PLAYER_CONTROLS_ON = false;
+              //when player falls of screen stop game
+              if (player.y - player.height > c.height) GAME_PLAYING = false;
+          }
+      }
+
+      //Set up initial enemy positions before rendering them
+      var enemies = [];
+      function setupEnemies() {
+          nextEnemyId = 0;
+          lastEnemyId = ENEMY_NUMBER - 1; //used to reposition enemies
+
+          for (var i = 0; i < ENEMY_NUMBER; i++) {
+              var yOffset = randomIntFromInterval(MIN_YOFFSET, MAX_YOFFSET);
+              var enemySet = {
+                  enemyUp: new Enemy(i, c.height / 2, yOffset),
+                  enemyDown: new Enemy(i, 0, yOffset, false)
+              };
+              enemies[i] = enemySet;
+          }
+      }
+
+      //Instantiate and draw enemies
+      function drawEnemies() {
+          for (var i = 0; i < enemies.length; i++) {
+              ctx.drawImage(enemies[i].enemyUp.img, enemies[i].enemyUp.x, enemies[i].enemyUp.y);
+              ctx.drawImage(enemies[i].enemyDown.img, enemies[i].enemyDown.x, enemies[i].enemyDown.y);
+              enemies[i].enemyUp.move();
+              enemies[i].enemyDown.move();
+          }
+      }
+
+      //Reset game function
+      function resetGame() {
+          scoreCounter.reset();
+          player.reset();
+          setupEnemies();
+      }
+
+      //Register event handlers & kick off the game
+      window.onload = function() {
+          c.addEventListener('click', function() {
+              if (PLAYER_CONTROLS_ON) {
+                  player.jump();
+              }
+              if (!GAME_PLAYING) {
+                  resetGame();
+                  GAME_PLAYING = true;
+                  PLAYER_CONTROLS_ON = true;
+              }
+          });
+
+          update();
+      };
+    })();
+  </script>
+</body>
+</html>
